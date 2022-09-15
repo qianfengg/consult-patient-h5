@@ -6,6 +6,7 @@
   </button>
   <button @click="store.delUser()">logout</button>
   <van-button type="danger">click</van-button>
+  <div class="test-div"></div>
 </template>
 
 <script setup lang="ts">
@@ -15,4 +16,10 @@ import { Button as VanButton } from 'vant'
 const store = useUserStore()
 </script>
 
-<style scoped></style>
+<style scoped>
+.test-div {
+  width: 187.5px;
+  height: 100px;
+  background-color: red;
+}
+</style>
