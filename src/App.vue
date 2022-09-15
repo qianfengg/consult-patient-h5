@@ -5,10 +5,12 @@
     login
   </button>
   <button @click="store.delUser()">logout</button>
+  <van-button type="danger">click</van-button>
 </template>
 
 <script setup lang="ts">
 import { useUserStore } from './stores'
+import { Button as VanButton } from 'vant'
 
 const store = useUserStore()
 </script>
