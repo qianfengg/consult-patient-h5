@@ -18,6 +18,10 @@ const agree = ref(false)
     <van-form autocomplete="off">
       <van-field type="tel" placeholder="请输入手机号"></van-field>
       <van-field type="password" placeholder="请输入密码"></van-field>
+      <!-- test svg -->
+      <svg aria-hidden="true">
+        <use href="#icon-login-eye-off"></use>
+      </svg>
       <div class="cp-cell">
         <van-checkbox v-model="agree">
           <span>我已同意</span>
