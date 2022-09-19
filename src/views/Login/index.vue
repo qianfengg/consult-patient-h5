@@ -2,6 +2,10 @@
 import { ref } from 'vue'
 
 const agree = ref(false)
+const showPwd = ref(false)
+
+const mobile = ref('')
+const password = ref('')
 </script>
 
 <template>
@@ -16,12 +20,19 @@ const agree = ref(false)
     </div>
     <!-- form 表单 -->
     <van-form autocomplete="off">
-      <van-field type="tel" placeholder="请输入手机号"></van-field>
-      <van-field type="password" placeholder="请输入密码"></van-field>
-      <!-- test svg -->
-      <svg aria-hidden="true">
-        <use href="#icon-login-eye-off"></use>
-      </svg>
+      <van-field v-model="mobile" type="tel" placeholder="请输入手机号"></van-field>
+      <van-field
+        v-model="password"
+        :type="`${showPwd ? 'text' : 'password'}`"
+        placeholder="请输入密码"
+      >
+        <template #right-icon>
+          <cp-icon
+            @click="showPwd = !showPwd"
+            :name="`login-eye-${showPwd ? 'on' : 'off'}`"
+          ></cp-icon>
+        </template>
+      </van-field>
       <div class="cp-cell">
         <van-checkbox v-model="agree">
           <span>我已同意</span>
