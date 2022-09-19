@@ -1,7 +1,8 @@
 import { useUserStore } from '@/stores'
 import router from '@/router'
-import axios from 'axios'
+import axios, { type Method } from 'axios'
 import { Toast } from 'vant'
+import type { User } from '@/types/user'
 
 // 1. 新axios实例，基础配置
 const baseURL = 'https://consult-api.itheima.net/'
@@ -44,5 +45,24 @@ instance.interceptors.response.use(
     return Promise.reject(err)
   }
 )
+type ApiResponse<T> = {
+  code: number
+  message: string
+  data: T
+}
+const request = <T>(url: string, method: Method = 'get', submitData?: object) => {
+  return instance.request<T, ApiResponse<T>>({
+    url,
+    method,
+    [method?.toLowerCase() === 'get' ? 'params' : 'data']: submitData
+  })
+}
 
-export { baseURL, instance }
+/**
+ * test request
+ */
+// request<User>('/user').then((res) => {
+//   res.data.id
+// })
+
+export { baseURL, instance, request }
