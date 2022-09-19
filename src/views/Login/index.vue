@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { mobileRules, passwordRules } from '@/utils/rules'
+import { Toast } from 'vant'
 import { ref } from 'vue'
 
 const agree = ref(false)
@@ -6,6 +8,13 @@ const showPwd = ref(false)
 
 const mobile = ref('')
 const password = ref('')
+
+const login = () => {
+  if (!agree.value) {
+    return Toast('请勾选协议')
+  }
+  console.log('可以发请求了', mobile.value, password.value)
+}
 </script>
 
 <template>
@@ -19,9 +28,15 @@ const password = ref('')
       </a>
     </div>
     <!-- form 表单 -->
-    <van-form autocomplete="off">
-      <van-field v-model="mobile" type="tel" placeholder="请输入手机号"></van-field>
+    <van-form @submit="login" autocomplete="off">
       <van-field
+        :rules="mobileRules"
+        v-model="mobile"
+        type="tel"
+        placeholder="请输入手机号"
+      ></van-field>
+      <van-field
+        :rules="passwordRules"
         v-model="password"
         :type="`${showPwd ? 'text' : 'password'}`"
         placeholder="请输入密码"
@@ -42,7 +57,7 @@ const password = ref('')
         </van-checkbox>
       </div>
       <div class="cp-cell">
-        <van-button block round type="primary">登 录</van-button>
+        <van-button native-type="submit" block round type="primary">登 录</van-button>
       </div>
       <div class="cp-cell">
         <a href="javascript:;">忘记密码？</a>
