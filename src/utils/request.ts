@@ -2,7 +2,6 @@ import { useUserStore } from '@/stores'
 import router from '@/router'
 import axios, { type Method } from 'axios'
 import { Toast } from 'vant'
-import type { User } from '@/types/user'
 
 // 1. 新axios实例，基础配置
 const baseURL = 'https://consult-api.itheima.net/'
@@ -33,6 +32,7 @@ instance.interceptors.response.use(
     }
     // 业务逻辑成功，返回响应数据，作为axios成功的结果
     return res.data
+    // return res
   },
   (err) => {
     if (err.response.status === 401) {
