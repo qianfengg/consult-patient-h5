@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { loginByPassword } from '@/services/user'
+import { useUserStore } from '@/stores'
 import { mobileRules, passwordRules } from '@/utils/rules'
 import { Toast } from 'vant'
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const agree = ref(false)
 const showPwd = ref(false)
@@ -9,11 +12,19 @@ const showPwd = ref(false)
 const mobile = ref('')
 const password = ref('')
 
-const login = () => {
+const store = useUserStore()
+const router = useRouter()
+const route = useRoute()
+
+const login = async () => {
   if (!agree.value) {
     return Toast('请勾选协议')
   }
-  console.log('可以发请求了', mobile.value, password.value)
+  // console.log('可以发请求了', mobile.value, password.value)
+  const res = await loginByPassword(mobile.value, password.value)
+  store.setUser(res.data)
+  router.replace((route.query.returnUrl as string) || '/user')
+  Toast.success('登录成功')
 }
 </script>
 
