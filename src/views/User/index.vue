@@ -3,6 +3,16 @@ import { getUserInfo } from '@/services/user'
 import type { UserInfo } from '@/types/user'
 import { onMounted, ref } from 'vue'
 
+const tools = [
+  { label: '我的问诊', path: '/user/consult' },
+  { label: '我的处方', path: '/' },
+  { label: '家庭档案', path: '/user/patient' },
+  { label: '地址管理', path: '/user/address' },
+  { label: '我的评价', path: '/' },
+  { label: '官方客服', path: '/' },
+  { label: '设置', path: '/' }
+]
+
 const user = ref<UserInfo>()
 onMounted(async () => {
   const res = await getUserInfo()
@@ -71,11 +81,42 @@ onMounted(async () => {
         </van-col>
       </van-row>
     </div>
+    <div class="user-page-group">
+      <h3>快捷工具</h3>
+      <van-cell
+        :title="item.label"
+        :to="item.path"
+        is-link
+        :border="false"
+        v-for="(item, i) in tools"
+        :key="i"
+      >
+        <template #icon><cp-icon :name="`user-tool-0${i + 1}`" /></template>
+      </van-cell>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .user-page {
+  // 分组
+  &-group {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    h3 {
+      padding-left: 16px;
+      line-height: 44px;
+    }
+    .van-cell {
+      align-items: center;
+    }
+    .cp-icon {
+      font-size: 17px;
+      margin-right: 10px;
+    }
+  }
+
   background-color: var(--cp-bg);
   min-height: calc(100vh - 50px);
   padding: 0 15px 65px;
