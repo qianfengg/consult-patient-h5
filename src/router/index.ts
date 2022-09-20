@@ -1,3 +1,4 @@
+import { useUserStore } from './../stores/user'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -32,6 +33,16 @@ const router = createRouter({
       component: () => import('@/views/Playground/index.vue')
     }
   ]
+})
+
+// 控制权限
+router.beforeEach((to) => {
+  const store = useUserStore()
+  const token = store.user?.token
+  const whiteList = ['/login']
+  if (!token && !whiteList.includes(to.path)) {
+    return '/login'
+  }
 })
 
 export default router
