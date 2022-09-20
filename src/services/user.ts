@@ -1,4 +1,4 @@
-import type { CodeType, User, UserInfo } from '@/types/user'
+import type { CodeType, Patient, User, UserInfo } from '@/types/user'
 import { request } from '@/utils/request'
 
 export const loginByPassword = (mobile: string, password: string) => {
@@ -24,4 +24,8 @@ export const loginByCode = (mobile: string, code: string) => {
 
 export const getUserInfo = () => {
   return request<UserInfo>('patient/myUser')
+}
+
+export const getPatientList = () => {
+  return request<Patient[]>('patient/mylist')
 }
