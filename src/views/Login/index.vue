@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { loginByPassword, sendMobileCode } from '@/services/user'
+import { loginByCode, loginByPassword, sendMobileCode } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { mobileRules, passwordRules, codeRules } from '@/utils/rules'
 import { Toast, type FormInstance } from 'vant'
@@ -23,7 +23,9 @@ const login = async () => {
     return Toast('请勾选协议')
   }
   // console.log('可以发请求了', mobile.value, password.value)
-  const res = await loginByPassword(mobile.value, password.value)
+  const res = isPasswordLogin.value
+    ? await loginByPassword(mobile.value, password.value)
+    : await loginByCode(mobile.value, code.value)
   store.setUser(res.data)
   router.replace((route.query.returnUrl as string) || '/user')
   Toast.success('登录成功')
