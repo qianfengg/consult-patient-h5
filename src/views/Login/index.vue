@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { loginByPassword } from '@/services/user'
+import { loginByPassword, sendMobileCode } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { mobileRules, passwordRules, codeRules } from '@/utils/rules'
-import { Toast } from 'vant'
-import { ref } from 'vue'
+import { Toast, type FormInstance } from 'vant'
+import { onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const agree = ref(false)
@@ -28,6 +28,33 @@ const login = async () => {
   router.replace((route.query.returnUrl as string) || '/user')
   Toast.success('登录成功')
 }
+
+// API 接口函数
+// 发送验证码逻辑
+// 2.1 判断是否已经发送验证码
+// 2.2 校验手机
+// 2.3 发送请求
+// 倒计时逻辑
+const time = ref(0)
+let timer: number = -1
+const form = ref<FormInstance | null>(null)
+const send = async () => {
+  if (time.value > 0) return
+  await form.value?.validate('mobile')
+  await sendMobileCode(mobile.value, 'login')
+  Toast.success('发送成功')
+  time.value = 60
+  if (timer > 0) clearInterval(timer)
+  timer = window.setInterval(() => {
+    time.value--
+    if (time.value <= 0) {
+      clearInterval(timer)
+    }
+  }, 1000)
+}
+onUnmounted(() => {
+  clearInterval(timer)
+})
 </script>
 
 <template>
@@ -41,8 +68,9 @@ const login = async () => {
       </a>
     </div>
     <!-- form 表单 -->
-    <van-form @submit="login" autocomplete="off">
+    <van-form ref="form" @submit="login" autocomplete="off">
       <van-field
+        name="mobile"
         :rules="mobileRules"
         v-model="mobile"
         type="tel"
@@ -64,7 +92,9 @@ const login = async () => {
       </van-field>
       <van-field v-else v-model="code" placeholder="请输入验证码" :rules="codeRules">
         <template #button>
-          <span class="btn-send">发送验证码</span>
+          <span @click="send" class="btn-send" :class="{ active: time > 0 }">{{
+            time > 0 ? `${time}s后再发送` : '发送验证码'
+          }}</span>
         </template>
       </van-field>
       <div class="cp-cell">
