@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { getUserInfo } from '@/services/user'
+import { useUserStore } from '@/stores'
 import type { UserInfo } from '@/types/user'
+import { Dialog } from 'vant'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const tools = [
   { label: '我的问诊', path: '/user/consult' },
@@ -18,6 +21,19 @@ onMounted(async () => {
   const res = await getUserInfo()
   user.value = res.data
 })
+// 退出功能
+const store = useUserStore()
+const router = useRouter()
+const logout = async () => {
+  await Dialog.confirm({
+    title: '温馨提示',
+    message: '您是否要退出优医问诊',
+    cancelButtonText: '否',
+    confirmButtonText: '是'
+  })
+  store.delUser()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -94,11 +110,19 @@ onMounted(async () => {
         <template #icon><cp-icon :name="`user-tool-0${i + 1}`" /></template>
       </van-cell>
     </div>
+    <a @click="logout" class="logout" href="javascript:;">退出登录</a>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .user-page {
+  .logout {
+    display: block;
+    margin: 20px auto;
+    width: 100px;
+    text-align: center;
+    color: var(--cp-price);
+  }
   // 分组
   &-group {
     background-color: #fff;
