@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { loginByPassword } from '@/services/user'
 import { useUserStore } from '@/stores'
-import { mobileRules, passwordRules } from '@/utils/rules'
+import { mobileRules, passwordRules, codeRules } from '@/utils/rules'
 import { Toast } from 'vant'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const agree = ref(false)
 const showPwd = ref(false)
+const isPasswordLogin = ref(true)
 
 const mobile = ref('')
 const password = ref('')
+const code = ref('')
 
 const store = useUserStore()
 const router = useRouter()
@@ -32,9 +34,9 @@ const login = async () => {
   <div class="login-page">
     <cp-nav-bar right-text="注册" @click-right="$router.push('/register')"></cp-nav-bar>
     <div class="login-head">
-      <h3>密码登录</h3>
-      <a href="javascript:;">
-        <span>短信验证码登录</span>
+      <h3>{{ isPasswordLogin ? '密码' : '短信' }}登录</h3>
+      <a href="javascript:;" @click="isPasswordLogin = !isPasswordLogin">
+        <span>{{ !isPasswordLogin ? '密码' : '短信验证码' }}登录</span>
         <van-icon name="arrow"></van-icon>
       </a>
     </div>
@@ -47,6 +49,7 @@ const login = async () => {
         placeholder="请输入手机号"
       ></van-field>
       <van-field
+        v-if="isPasswordLogin"
         :rules="passwordRules"
         v-model="password"
         :type="`${showPwd ? 'text' : 'password'}`"
@@ -57,6 +60,11 @@ const login = async () => {
             @click="showPwd = !showPwd"
             :name="`login-eye-${showPwd ? 'on' : 'off'}`"
           ></cp-icon>
+        </template>
+      </van-field>
+      <van-field v-else v-model="code" placeholder="请输入验证码" :rules="codeRules">
+        <template #button>
+          <span class="btn-send">发送验证码</span>
         </template>
       </van-field>
       <div class="cp-cell">
@@ -130,6 +138,12 @@ const login = async () => {
         color: var(--cp-primary);
         padding: 0 5px;
       }
+    }
+  }
+  .btn-send {
+    color: var(--cp-primary);
+    &.active {
+      color: rgba(22, 194, 163, 0.5);
     }
   }
 }
