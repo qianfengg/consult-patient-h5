@@ -31,5 +31,9 @@ export const getPatientList = () => {
 }
 
 export const addPatient = (patient: Patient) => {
-  return request('/patient/add', 'POST', patient)
+  return request('patient/add', 'POST', patient)
+}
+
+export const updatePatient = (patient: Patient) => {
+  return request('patient/update', 'PUT', patient)
 }

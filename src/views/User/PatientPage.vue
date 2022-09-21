@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { addPatient, getPatientList } from '@/services/user'
+import { addPatient, getPatientList, updatePatient } from '@/services/user'
 import type { Patient } from '@/types/user'
 import { Toast } from 'vant'
 import { computed, onMounted, ref } from 'vue'
@@ -33,8 +33,16 @@ const options = [
   }
 ]
 const show = ref(false)
-const showPopup = () => {
-  patient.value = { ...initPatient }
+const showPopup = (item?: Patient) => {
+  // console.log(item)
+  if (item) {
+    // edit
+    const { id, idCard, name, gender, defaultFlag } = item
+    patient.value = { id, idCard, name, gender, defaultFlag }
+  } else {
+    // add
+    patient.value = { ...initPatient }
+  }
   show.value = true
 }
 const patient = ref<Patient>({ ...initPatient })
@@ -54,10 +62,10 @@ const submit = async () => {
   const info = Validator.getInfo(idCard)
   // console.log(info)
   if (info.sex !== patient.value.gender) return Toast('性别和身份证不符')
-  await addPatient(patient.value)
+  patient.value.id ? await updatePatient(patient.value) : await addPatient(patient.value)
   getList()
   show.value = false
-  Toast('添加患者成功')
+  Toast(`${patient.value.id ? '编辑' : '添加'}患者成功`)
 }
 </script>
 
@@ -74,10 +82,10 @@ const submit = async () => {
           <span>{{ item.genderValue }}</span>
           <span>{{ item.age }}岁</span>
         </div>
-        <div class="icon"><cp-icon name="user-edit" /></div>
+        <div class="icon"><cp-icon name="user-edit" @click="showPopup(item)" /></div>
         <div class="tag" v-if="item.defaultFlag === 1">默认</div>
       </div>
-      <div class="patient-add" @click="showPopup" v-if="list.length < 6">
+      <div class="patient-add" @click="showPopup()" v-if="list.length < 6">
         <cp-icon name="user-add" />
         <p>添加患者</p>
       </div>
@@ -87,7 +95,7 @@ const submit = async () => {
       <cp-nav-bar
         @right-click="submit"
         :back="() => (show = false)"
-        title="添加患者"
+        :title="`${patient.id ? '编辑' : '添加'}患者`"
         right-text="保存"
       ></cp-nav-bar>
       <van-form autocomplete="off">
