@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getPatientList } from '@/services/user'
 import type { Patient } from '@/types/user'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import CpRadioBtn from '../../components/cp-radio-btn.vue'
 
 const initPatient: Patient = {
@@ -35,6 +35,14 @@ const showPopup = () => {
   show.value = true
 }
 const patient = ref<Patient>({ ...initPatient })
+const defaultFlag = computed({
+  get() {
+    return patient.value.defaultFlag === 1
+  },
+  set(val) {
+    patient.value.defaultFlag = val ? 1 : 0
+  }
+})
 </script>
 
 <template>
@@ -72,7 +80,7 @@ const patient = ref<Patient>({ ...initPatient })
         </van-field>
         <van-field label="默认就诊人">
           <template #input>
-            <van-checkbox v-model="patient.defaultFlag" round />
+            <van-checkbox v-model="defaultFlag" round />
           </template>
         </van-field>
       </van-form>
