@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getPatientList } from '@/services/user'
+import { addPatient, getPatientList } from '@/services/user'
 import type { Patient } from '@/types/user'
 import { Toast } from 'vant'
 import { computed, onMounted, ref } from 'vue'
@@ -46,7 +46,7 @@ const defaultFlag = computed({
     patient.value.defaultFlag = val ? 1 : 0
   }
 })
-const submit = () => {
+const submit = async () => {
   const idCard = patient.value.idCard
   if (!patient.value.name) return Toast('请输入姓名')
   if (!idCard) return Toast('请输入身份证号')
@@ -54,6 +54,10 @@ const submit = () => {
   const info = Validator.getInfo(idCard)
   // console.log(info)
   if (info.sex !== patient.value.gender) return Toast('性别和身份证不符')
+  await addPatient(patient.value)
+  getList()
+  show.value = false
+  Toast('添加患者成功')
 }
 </script>
 
@@ -73,11 +77,11 @@ const submit = () => {
         <div class="icon"><cp-icon name="user-edit" /></div>
         <div class="tag" v-if="item.defaultFlag === 1">默认</div>
       </div>
-      <div class="patient-add" @click="showPopup">
+      <div class="patient-add" @click="showPopup" v-if="list.length < 6">
         <cp-icon name="user-add" />
         <p>添加患者</p>
       </div>
-      <div class="patient-tip" v-if="list.length < 6">最多可添加 6 人</div>
+      <div class="patient-tip">最多可添加 6 人</div>
     </div>
     <van-popup v-model:show="show" position="right">
       <cp-nav-bar

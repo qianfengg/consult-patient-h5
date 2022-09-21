@@ -29,3 +29,7 @@ export const getUserInfo = () => {
 export const getPatientList = () => {
   return request<Patient[]>('patient/mylist')
 }
+
+export const addPatient = (patient: Patient) => {
+  return request('/patient/add', 'POST', patient)
+}
