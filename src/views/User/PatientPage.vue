@@ -24,6 +24,10 @@ const options = [
   }
 ]
 const gender = ref(0)
+const show = ref(false)
+const showPopup = () => {
+  show.value = true
+}
 </script>
 
 <template>
@@ -42,19 +46,30 @@ const gender = ref(0)
         <div class="icon"><cp-icon name="user-edit" /></div>
         <div class="tag" v-if="item.defaultFlag === 1">默认</div>
       </div>
-      <div class="patient-add">
+      <div class="patient-add" @click="showPopup">
         <cp-icon name="user-add" />
         <p>添加患者</p>
       </div>
       <div class="patient-tip" v-if="list.length < 6">最多可添加 6 人</div>
     </div>
     <cp-radio-btn :options="options" v-model="gender"></cp-radio-btn>
+    <van-popup v-model:show="show" position="right">
+      <cp-nav-bar :back="() => (show = false)" title="添加患者" right-text="保存"></cp-nav-bar>
+    </van-popup>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .patient-page {
   padding: 46px 0 80px;
+  ::v-deep() {
+    .van-popup {
+      width: 100%;
+      height: 100%;
+      padding-top: 46px;
+      box-sizing: border-box;
+    }
+  }
 }
 .patient-list {
   padding: 15px;

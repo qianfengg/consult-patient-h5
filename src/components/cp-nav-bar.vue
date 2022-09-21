@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-defineProps<{
+const props = defineProps<{
   title?: string
   rightText?: string
+  back?: () => void
 }>()
 const emit = defineEmits<{
   // eslint-disable-next-line no-unused-vars
@@ -14,6 +15,7 @@ const router = useRouter()
 // 使用组件时候才能确定的功能：标题，右侧文字，点击右侧文字行为（props传入）
 const onClickLeft = () => {
   //
+  if (props.back) return props.back()
   const back = history.state.back
   if (back) {
     router.back()
