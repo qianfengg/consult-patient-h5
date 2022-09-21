@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { addPatient, getPatientList, updatePatient } from '@/services/user'
+import { addPatient, deletePatient, getPatientList, updatePatient } from '@/services/user'
 import type { Patient } from '@/types/user'
-import { Toast } from 'vant'
+import { Dialog, Toast } from 'vant'
 import { computed, onMounted, ref } from 'vue'
 import CpRadioBtn from '../../components/cp-radio-btn.vue'
 import IDValidator from 'id-validator'
@@ -67,6 +67,16 @@ const submit = async () => {
   show.value = false
   Toast(`${patient.value.id ? '编辑' : '添加'}患者成功`)
 }
+const remove = async () => {
+  await Dialog.confirm({
+    title: '温馨提示',
+    message: '确认删除吗'
+  })
+  await deletePatient(patient.value.id!)
+  getList()
+  show.value = false
+  Toast('删除成功')
+}
 </script>
 
 <template>
@@ -112,6 +122,9 @@ const submit = async () => {
             <van-checkbox v-model="defaultFlag" round />
           </template>
         </van-field>
+        <van-action-bar v-if="patient.id">
+          <van-action-bar-button @click="remove">删除</van-action-bar-button>
+        </van-action-bar>
       </van-form>
     </van-popup>
   </div>
@@ -120,6 +133,14 @@ const submit = async () => {
 <style lang="scss" scoped>
 .patient-page {
   padding: 46px 0 80px;
+  .van-action-bar {
+    padding: 0 10px;
+    margin-bottom: 10px;
+    .van-button {
+      color: var(--cp-price);
+      background-color: var(--cp-bg);
+    }
+  }
   ::v-deep() {
     .van-popup {
       width: 100%;
