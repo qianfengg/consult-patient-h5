@@ -16,13 +16,14 @@ onMounted(() => {
 const options = [
   {
     label: '男',
-    value: 1
+    value: 0
   },
   {
     label: '女',
-    value: 2
+    value: 1
   }
 ]
+const gender = ref(0)
 </script>
 
 <template>
@@ -47,7 +48,7 @@ const options = [
       </div>
       <div class="patient-tip" v-if="list.length < 6">最多可添加 6 人</div>
     </div>
-    <cp-radio-btn :options="options"></cp-radio-btn>
+    <cp-radio-btn :options="options" v-model="gender"></cp-radio-btn>
   </div>
 </template>
 

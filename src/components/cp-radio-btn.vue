@@ -4,14 +4,25 @@ defineProps<{
     label: string
     value: number | string
   }[]
+  modelValue: number | string
+}>()
+const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
+  (e: 'update:modelValue', val: number | string): void
 }>()
 </script>
 
 <template>
   <div class="cp-radio-btn">
-    <a class="item" href="javascript:;" v-for="item in options" :key="item.value">{{
-      item.label
-    }}</a>
+    <a
+      :class="{ active: modelValue === item.value }"
+      class="item"
+      href="javascript:;"
+      @click="emit('update:modelValue', item.value)"
+      v-for="item in options"
+      :key="item.value"
+      >{{ item.label }}</a
+    >
   </div>
 </template>
 
