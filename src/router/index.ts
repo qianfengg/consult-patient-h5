@@ -54,7 +54,7 @@ const router = createRouter({
 
 // 控制权限
 router.beforeEach((to) => {
-  document.title = `优医问诊-${to.meta.title}`
+  document.title = `优医问诊-${to.meta.title || '欢迎使用'}`
   const store = useUserStore()
   const token = store.user?.token
   const whiteList = ['/login']
