@@ -4,6 +4,12 @@ import type { Patient } from '@/types/user'
 import { onMounted, ref } from 'vue'
 import CpRadioBtn from '../../components/cp-radio-btn.vue'
 
+const initPatient: Patient = {
+  name: '',
+  idCard: '',
+  gender: 1,
+  defaultFlag: 0
+}
 const list = ref<Patient[]>([])
 const getList = async () => {
   const res = await getPatientList()
@@ -16,18 +22,19 @@ onMounted(() => {
 const options = [
   {
     label: '男',
-    value: 0
+    value: 1
   },
   {
     label: '女',
-    value: 1
+    value: 0
   }
 ]
-const gender = ref(0)
 const show = ref(false)
 const showPopup = () => {
+  patient.value = { ...initPatient }
   show.value = true
 }
+const patient = ref<Patient>({ ...initPatient })
 </script>
 
 <template>
@@ -52,9 +59,23 @@ const showPopup = () => {
       </div>
       <div class="patient-tip" v-if="list.length < 6">最多可添加 6 人</div>
     </div>
-    <cp-radio-btn :options="options" v-model="gender"></cp-radio-btn>
     <van-popup v-model:show="show" position="right">
       <cp-nav-bar :back="() => (show = false)" title="添加患者" right-text="保存"></cp-nav-bar>
+      <van-form autocomplete="off">
+        <van-field v-model="patient.name" label="真实姓名" placeholder="请输入真实姓名" />
+        <van-field v-model="patient.idCard" label="身份证号" placeholder="请输入身份证号" />
+        <van-field label="性别">
+          <!-- 单选按钮组件 -->
+          <template #input>
+            <cp-radio-btn v-model="patient.gender" :options="options"></cp-radio-btn>
+          </template>
+        </van-field>
+        <van-field label="默认就诊人">
+          <template #input>
+            <van-checkbox v-model="patient.defaultFlag" round />
+          </template>
+        </van-field>
+      </van-form>
     </van-popup>
   </div>
 </template>

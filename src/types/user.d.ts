@@ -28,7 +28,7 @@ export type Patient = {
   idCard: string
   defaultFlag: 0 | 1
   gender: 0 | 1
-  genderValue: string
-  age: number
-  id: string
+  genderValue?: string
+  age?: number
+  id?: string
 }
