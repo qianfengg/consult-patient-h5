@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { getPatientList } from '@/services/user'
 import type { Patient } from '@/types/user'
+import { Toast } from 'vant'
 import { computed, onMounted, ref } from 'vue'
 import CpRadioBtn from '../../components/cp-radio-btn.vue'
+import IDValidator from 'id-validator'
+const Validator = new IDValidator()
 
 const initPatient: Patient = {
   name: '',
@@ -43,6 +46,15 @@ const defaultFlag = computed({
     patient.value.defaultFlag = val ? 1 : 0
   }
 })
+const submit = () => {
+  const idCard = patient.value.idCard
+  if (!patient.value.name) return Toast('请输入姓名')
+  if (!idCard) return Toast('请输入身份证号')
+  if (!Validator.isValid(idCard)) return Toast('请输入正确的身份证')
+  const info = Validator.getInfo(idCard)
+  // console.log(info)
+  if (info.sex !== patient.value.gender) return Toast('性别和身份证不符')
+}
 </script>
 
 <template>
@@ -68,7 +80,12 @@ const defaultFlag = computed({
       <div class="patient-tip" v-if="list.length < 6">最多可添加 6 人</div>
     </div>
     <van-popup v-model:show="show" position="right">
-      <cp-nav-bar :back="() => (show = false)" title="添加患者" right-text="保存"></cp-nav-bar>
+      <cp-nav-bar
+        @right-click="submit"
+        :back="() => (show = false)"
+        title="添加患者"
+        right-text="保存"
+      ></cp-nav-bar>
       <van-form autocomplete="off">
         <van-field v-model="patient.name" label="真实姓名" placeholder="请输入真实姓名" />
         <van-field v-model="patient.idCard" label="身份证号" placeholder="请输入身份证号" />
