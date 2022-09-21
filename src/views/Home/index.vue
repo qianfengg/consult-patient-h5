@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import KnowledgeList from './components/KnowledgeList.vue'
+import type { KnowledgeType } from '@/types/consult'
+
+const active = ref<KnowledgeType>('recommend')
+</script>
 
 <template>
   <div class="home-page">
@@ -69,6 +75,20 @@
         </van-swipe-item>
       </van-swipe>
     </div>
+    <van-tabs v-model:active="active" shrink sticky>
+      <van-tab title="关注" name="like">
+        <KnowledgeList></KnowledgeList>
+      </van-tab>
+      <van-tab title="推荐" name="recommend">
+        <KnowledgeList></KnowledgeList>
+      </van-tab>
+      <van-tab title="减脂" name="fatReduction">
+        <KnowledgeList></KnowledgeList>
+      </van-tab>
+      <van-tab title="饮食" name="food">
+        <KnowledgeList></KnowledgeList>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
