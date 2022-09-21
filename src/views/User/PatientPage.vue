@@ -2,6 +2,7 @@
 import { getPatientList } from '@/services/user'
 import type { Patient } from '@/types/user'
 import { onMounted, ref } from 'vue'
+import CpRadioBtn from '../../components/cp-radio-btn.vue'
 
 const list = ref<Patient[]>([])
 const getList = async () => {
@@ -11,6 +12,17 @@ const getList = async () => {
 onMounted(() => {
   getList()
 })
+
+const options = [
+  {
+    label: '男',
+    value: 1
+  },
+  {
+    label: '女',
+    value: 2
+  }
+]
 </script>
 
 <template>
@@ -35,6 +47,7 @@ onMounted(() => {
       </div>
       <div class="patient-tip" v-if="list.length < 6">最多可添加 6 人</div>
     </div>
+    <cp-radio-btn :options="options"></cp-radio-btn>
   </div>
 </template>
 
