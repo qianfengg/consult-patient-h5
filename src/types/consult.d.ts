@@ -66,3 +66,6 @@ export type DoctorPage = {
   total: number
   rows: DoctorList
 }
+
+// topic百科话题,knowledge百科文章,doc医生,disease疾病
+export type FollowType = 'topic' | 'knowledge' | 'doc' | 'disease'
