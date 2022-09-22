@@ -17,7 +17,7 @@ const params = ref<KnowledgeParams>({
   pageSize: 5
 })
 const onLoad = async () => {
-  console.log('loading')
+  // console.log('loading')
   // setTimeout(() => {
   //   const data = [1, 2, 3, 4, 5]
   //   list.value.push(...data)
