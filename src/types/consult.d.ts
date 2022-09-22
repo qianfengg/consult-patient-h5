@@ -1,3 +1,28 @@
+import { ConsultType, ConsultTime } from '@/enums'
+
+// 图片列表
+export type Image = {
+  id: string
+  url: string
+}
+// 问诊记录
+export type Consult = {
+  id: string
+  type: ConsultType
+  illnessType: 0 | 1
+  depId: string
+  illnessDesc: string
+  illnessTime: ConsultTime
+  consultFlag: 0 | 1
+  pictures: Image[]
+  patientId: string
+  couponId: string
+}
+
+// 问诊记录-全部可选
+export type PartialConsult = Partial<Consult>
+// Required 转换为全部必须   Partial 转换问全部可选  两个内置的泛型类型
+
 // recommend推荐，fatReduction减脂，food健康饮食like关注医生页面文章
 // 文章类型
 export type KnowledgeType = 'like' | 'recommend' | 'fatReduction' | 'food'
