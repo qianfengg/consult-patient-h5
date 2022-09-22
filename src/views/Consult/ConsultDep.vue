@@ -1,7 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { getAllDep } from '@/services/consult'
+import { useConsultStore } from '@/stores'
+import type { TopDep } from '@/types/consult'
+import { computed, onMounted, ref } from 'vue'
 
 const active = ref(0)
+// 编写科室需要的类型
+// 准备API函数
+// 实现一级科室切换
+// 实现二级科室切换
+// 跳转时记录科室到问诊记录
+const allDep = ref<TopDep[]>([])
+onMounted(async () => {
+  const res = await getAllDep()
+  allDep.value = res.data
+})
+const subDep = computed(() => allDep.value[active.value]?.child)
+const store = useConsultStore()
 </script>
 
 <template>
@@ -10,16 +25,17 @@ const active = ref(0)
     <div class="wrapper">
       <!-- 左侧侧边栏 -->
       <van-sidebar v-model="active">
-        <van-sidebar-item title="内科" />
-        <van-sidebar-item title="外科" />
-        <van-sidebar-item title="皮肤科" />
-        <van-sidebar-item title="骨科" />
+        <van-sidebar-item :title="item.name" v-for="item in allDep" :key="item.id" />
       </van-sidebar>
       <!-- 二级科室 -->
       <div class="sub-dep">
-        <router-link to="/consult/illness">科室一</router-link>
-        <router-link to="/consult/illness">科室二</router-link>
-        <router-link to="/consult/illness">科室三</router-link>
+        <router-link
+          @click="store.setDepId(sub.id)"
+          to="/consult/illness"
+          v-for="sub in subDep"
+          :key="sub.id"
+          >{{ sub.name }}</router-link
+        >
       </div>
     </div>
   </div>
