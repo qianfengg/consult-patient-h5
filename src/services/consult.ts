@@ -14,7 +14,7 @@ export const getDoctorPage = (params: PageParams) => {
   return request<DoctorPage>('home/page/doc', 'get', params)
 }
 
-export const followDoctor = (id: string, type: FollowType = 'doc') => {
+export const followTarget = (id: string, type: FollowType = 'doc') => {
   return request('like', 'POST', {
     id,
     type
