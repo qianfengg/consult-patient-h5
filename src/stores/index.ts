@@ -10,3 +10,4 @@ export default pinia
 export { useUserStore } */
 
 export * from './user'
+export * from './consult'
