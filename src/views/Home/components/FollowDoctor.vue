@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import DoctorCard from './DoctorCard.vue'
 import { useWindowSize } from '@vueuse/core'
+import { getDoctorPage } from '@/services/consult'
+import type { DoctorList } from '@/types/consult'
 // const deviceWidth = ref(375)
 const { width: deviceWidth } = useWindowSize()
 const computedWidth = computed(() => (150 / 375) * deviceWidth.value)
@@ -15,6 +17,11 @@ const computedWidth = computed(() => (150 / 375) * deviceWidth.value)
 // onUnmounted(() => {
 //   window.removeEventListener('resize', setWidth)
 // })
+const list = ref<DoctorList>([])
+onMounted(async () => {
+  const res = await getDoctorPage({ current: 1, pageSize: 5 })
+  list.value = res.data.rows
+})
 </script>
 
 <template>
@@ -26,8 +33,8 @@ const computedWidth = computed(() => (150 / 375) * deviceWidth.value)
     <div class="body">
       <!-- swipe 组件 -->
       <van-swipe class="my-swipe" :loop="false" :show-indicators="false" :width="computedWidth">
-        <van-swipe-item v-for="i in 5" :key="i">
-          <DoctorCard></DoctorCard>
+        <van-swipe-item v-for="item in list" :key="item.id">
+          <DoctorCard :item="item"></DoctorCard>
         </van-swipe-item>
       </van-swipe>
     </div>
