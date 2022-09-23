@@ -4,8 +4,9 @@ import { getPatient } from '@/services/user'
 import { useConsultStore } from '@/stores'
 import type { ConsultOrderPreData } from '@/types/consult'
 import type { Patient } from '@/types/user'
-import { Toast } from 'vant'
+import { Dialog, Toast } from 'vant'
 import { onMounted, ref } from 'vue'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
 
 const store = useConsultStore()
 const orderPreData = ref<ConsultOrderPreData>()
@@ -48,6 +49,30 @@ const submit = async () => {
   // 打开
   show.value = true
 }
+const router = useRouter()
+const beforeCloseFn = () => {
+  return Dialog.confirm({
+    title: '关闭支付',
+    message: '取消支付将无法获得医生回复，医生接诊名额有限，是否确认关闭？',
+    cancelButtonText: '仍要关闭',
+    confirmButtonText: '继续支付',
+    confirmButtonColor: 'var(--cp-primary)'
+  })
+    .then(() => {
+      // 继续支付
+      return false
+    })
+    .catch(() => {
+      // 仍要关闭
+      router.push('/user/consult')
+      return true
+    })
+}
+onBeforeRouteLeave(() => {
+  if (orderId.value) {
+    return false
+  }
+})
 </script>
 
 <template>
@@ -85,7 +110,13 @@ const submit = async () => {
       @click="submit"
       :loading="loading"
     />
-    <van-action-sheet v-model:show="show" title="选择支付方式">
+    <van-action-sheet
+      v-model:show="show"
+      title="选择支付方式"
+      :closeable="false"
+      :before-close="beforeCloseFn"
+      :close-on-popstate="false"
+    >
       <div class="pay-type">
         <p class="amount">￥{{ orderPreData.actualPayment.toFixed(2) }}</p>
         <van-cell-group>
