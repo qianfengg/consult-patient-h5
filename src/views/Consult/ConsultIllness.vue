@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import type { ConsultIllness } from '@/types/consult'
+import { computed, onMounted, ref } from 'vue'
+import type { ConsultIllness, Image } from '@/types/consult'
 import { ConsultTime } from '@/enums'
 import type { UploaderAfterRead, UploaderFileListItem } from 'vant/lib/uploader/types'
 import { uploadImage } from '@/services/consult'
-import { Toast } from 'vant'
+import { Dialog, Toast } from 'vant'
 import { useConsultStore } from '@/stores'
 import { useRouter } from 'vue-router'
 
@@ -42,7 +42,7 @@ const consultFlagOptions = [
     value: 0
   }
 ]
-const fileList = ref([])
+const fileList = ref<Image[]>([])
 const afterRead: UploaderAfterRead = async (file) => {
   if (Array.isArray(file)) return
   if (!file.file) return
@@ -79,6 +79,21 @@ const next = () => {
   store.setIllness(form.value)
   router.push('/user/patient?isChange=1')
 }
+
+onMounted(() => {
+  if (store.consult.illnessDesc) {
+    Dialog.confirm({
+      title: '温馨提示',
+      message: '是否恢复您之前填写的病情信息呢？',
+      confirmButtonColor: 'var(--cp-primary)',
+      closeOnPopstate: false
+    }).then(() => {
+      const { illnessDesc, illnessTime, consultFlag, pictures } = store.consult
+      form.value = { illnessDesc, illnessTime, consultFlag, pictures }
+      fileList.value = pictures || []
+    })
+  }
+})
 </script>
 
 <template>
