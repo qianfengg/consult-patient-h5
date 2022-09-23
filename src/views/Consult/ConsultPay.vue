@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createOrder, getOrderPre } from '@/services/consult'
+import { createOrder, getOrderPre, getPayUrl } from '@/services/consult'
 import { getPatient } from '@/services/user'
 import { useConsultStore } from '@/stores'
 import type { ConsultOrderPreData } from '@/types/consult'
@@ -28,6 +28,15 @@ const getPatientInfo = async () => {
 }
 
 onMounted(() => {
+  if (!store.consult.type) {
+    return Dialog.alert({
+      title: '温馨提示',
+      message: '问诊信息不完整请重新填写，如有未支付的问诊订单可在问诊记录中继续支付',
+      closeOnPopstate: false
+    }).then(() => {
+      router.push('/')
+    })
+  }
   getOrderPreData()
   getPatientInfo()
 })
@@ -64,6 +73,7 @@ const beforeCloseFn = () => {
     })
     .catch(() => {
       // 仍要关闭
+      orderId.value = ''
       router.push('/user/consult')
       return true
     })
@@ -73,6 +83,17 @@ onBeforeRouteLeave(() => {
     return false
   }
 })
+const pay = async () => {
+  if (paymentMethod.value === undefined) return Toast('请选择支付方式')
+  if (orderId.value === undefined) return Toast('订单错误')
+  Toast.loading('跳转支付')
+  const res = await getPayUrl({
+    paymentMethod: paymentMethod.value,
+    orderId: orderId.value,
+    payCallback: `http://localhost:5173/room`
+  })
+  location.href = res.data.payUrl
+}
 </script>
 
 <template>
@@ -130,7 +151,7 @@ onBeforeRouteLeave(() => {
           </van-cell>
         </van-cell-group>
         <div class="btn">
-          <van-button type="primary" round block>立即支付</van-button>
+          <van-button @click="pay" type="primary" round block>立即支付</van-button>
         </div>
       </div>
     </van-action-sheet>
