@@ -67,6 +67,11 @@ const router = createRouter({
       meta: { title: '病情描述' }
     },
     {
+      path: '/consult/pay',
+      component: () => import('@/views/Consult/ConsultPay.vue'),
+      meta: { title: '支付' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }

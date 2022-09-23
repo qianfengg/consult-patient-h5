@@ -41,3 +41,7 @@ export const updatePatient = (patient: Patient) => {
 export const deletePatient = (id: string) => {
   return request(`patient/del/${id}`, 'DELETE')
 }
+
+export const getPatient = (id: string) => {
+  return request<Patient>(`patient/info/${id}`)
+}

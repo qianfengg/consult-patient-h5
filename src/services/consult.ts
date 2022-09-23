@@ -6,7 +6,9 @@ import type {
   DoctorPage,
   FollowType,
   TopDep,
-  Image
+  Image,
+  ConsultOrderPreParams,
+  ConsultOrderPreData
 } from './../types/consult.d'
 export const getKnowledgePage = (params: KnowledgeParams) => {
   return request<KnowledgePage>('patient/home/knowledge', 'GET', params)
@@ -31,4 +33,8 @@ export const uploadImage = (file: File) => {
   const fd = new FormData()
   fd.append('file', file)
   return request<Image>('upload', 'POST', fd)
+}
+
+export const getOrderPre = (params: ConsultOrderPreParams) => {
+  return request<ConsultOrderPreData>('patient/consult/order/pre', 'get', params)
 }
