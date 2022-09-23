@@ -37,6 +37,9 @@ const consultFlagOptions = [
     value: 0
   }
 ]
+const fileList = ref([])
+const afterRead = () => {}
+const deleteImg = () => {}
 </script>
 
 <template>
@@ -66,6 +69,18 @@ const consultFlagOptions = [
       <div class="item">
         <p>此次病情是否去医院就诊过？</p>
         <cp-radio-btn :options="consultFlagOptions" v-model="form.consultFlag"></cp-radio-btn>
+      </div>
+      <div class="illness-img">
+        <van-uploader
+          upload-text="上传图片"
+          upload-icon="photo-o"
+          max-count="9"
+          :max-size="5 * 1024 * 1024"
+          v-model="fileList"
+          :after-read="afterRead"
+          @delete="deleteImg"
+        ></van-uploader>
+        <p class="tip">上传内容仅医生可见,最多9张图,最大5MB</p>
       </div>
     </div>
   </div>
@@ -123,6 +138,43 @@ const consultFlagOptions = [
     > p {
       color: var(--cp-text3);
       padding: 15px 0;
+    }
+  }
+}
+.illness-img {
+  padding-top: 16px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  .tip {
+    font-size: 12px;
+    color: var(--cp-tip);
+  }
+  ::v-deep() {
+    .van-uploader {
+      &__preview {
+        &-delete {
+          left: -6px;
+          top: -6px;
+          border-radius: 50%;
+          background-color: var(--cp-primary);
+          width: 20px;
+          height: 20px;
+          &-icon {
+            transform: scale(0.9) translate(-22%, 22%);
+          }
+        }
+        &-image {
+          border-radius: 8px;
+          overflow: hidden;
+        }
+      }
+      &__upload {
+        border-radius: 8px;
+      }
+      &__upload-icon {
+        color: var(--cp-text3);
+      }
     }
   }
 }
