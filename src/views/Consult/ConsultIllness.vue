@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import type { ConsultIllness } from '@/types/consult'
 import { ConsultTime } from '@/enums'
+import type { UploaderAfterRead, UploaderFileListItem } from 'vant/lib/uploader/types'
+import { uploadImage } from '@/services/consult'
 
 const form = ref<ConsultIllness>({
   illnessDesc: '',
@@ -38,8 +40,26 @@ const consultFlagOptions = [
   }
 ]
 const fileList = ref([])
-const afterRead = () => {}
-const deleteImg = () => {}
+const afterRead: UploaderAfterRead = async (file) => {
+  if (Array.isArray(file)) return
+  if (!file.file) return
+  // console.log(item.file)
+  try {
+    file.status = 'uploading'
+    file.message = '上传中...'
+    const res = await uploadImage(file.file)
+    file.status = 'done'
+    file.message = undefined
+    file.url = res.data.url
+    form.value.pictures?.push(res.data)
+  } catch (e) {
+    file.status = 'failed'
+    file.message = '上传失败'
+  }
+}
+const deleteImg = (file: UploaderFileListItem) => {
+  form.value.pictures = form.value.pictures?.filter((item) => item.url !== file.url)
+}
 </script>
 
 <template>
@@ -80,7 +100,7 @@ const deleteImg = () => {}
           :after-read="afterRead"
           @delete="deleteImg"
         ></van-uploader>
-        <p class="tip">上传内容仅医生可见,最多9张图,最大5MB</p>
+        <p class="tip" v-if="!fileList.length">上传内容仅医生可见,最多9张图,最大5MB</p>
       </div>
     </div>
   </div>
