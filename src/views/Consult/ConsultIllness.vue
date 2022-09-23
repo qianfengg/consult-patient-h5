@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { ConsultIllness } from '@/types/consult'
 import { ConsultTime } from '@/enums'
 import type { UploaderAfterRead, UploaderFileListItem } from 'vant/lib/uploader/types'
 import { uploadImage } from '@/services/consult'
+import { Toast } from 'vant'
+import { useConsultStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
 const form = ref<ConsultIllness>({
   illnessDesc: '',
@@ -60,6 +63,22 @@ const afterRead: UploaderAfterRead = async (file) => {
 const deleteImg = (file: UploaderFileListItem) => {
   form.value.pictures = form.value.pictures?.filter((item) => item.url !== file.url)
 }
+const disabled = computed(() => {
+  return !(
+    form.value.consultFlag !== undefined &&
+    form.value.illnessDesc &&
+    form.value.illnessTime !== undefined
+  )
+})
+const store = useConsultStore()
+const router = useRouter()
+const next = () => {
+  if (!form.value.illnessDesc) return Toast('请输入病情描述!')
+  if (form.value.illnessTime === undefined) return Toast('请输入病症时间!')
+  if (form.value.consultFlag === undefined) return Toast('请输入是否就诊过!')
+  store.setIllness(form.value)
+  router.push('/user/patient?isChange=1')
+}
 </script>
 
 <template>
@@ -102,11 +121,22 @@ const deleteImg = (file: UploaderFileListItem) => {
         ></van-uploader>
         <p class="tip" v-if="!fileList.length">上传内容仅医生可见,最多9张图,最大5MB</p>
       </div>
+      <van-button :class="{ disabled }" @click="next" type="primary" block round>下一步</van-button>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.van-button {
+  font-size: 16px;
+  margin-bottom: 30px;
+  &.disabled {
+    opacity: 1;
+    background: #fafafa;
+    color: #d9dbde;
+    border: #fafafa;
+  }
+}
 .consult-illness-page {
   padding-top: 46px;
 }
