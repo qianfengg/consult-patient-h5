@@ -72,6 +72,11 @@ const router = createRouter({
       meta: { title: '支付' }
     },
     {
+      path: '/room',
+      component: () => import('@/views/Room/index.vue'),
+      meta: { title: '问诊室' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
