@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import type { ConsultIllness, Image } from '@/types/consult'
-import { ConsultTime } from '@/enums'
 import type { UploaderAfterRead, UploaderFileListItem } from 'vant/lib/uploader/types'
 import { uploadImage } from '@/services/consult'
 import { Dialog, Toast } from 'vant'
 import { useConsultStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import { consultFlagOptions, illnessTimeOptions } from '@/services/constants'
 
 const form = ref<ConsultIllness>({
   illnessDesc: '',
@@ -14,34 +14,7 @@ const form = ref<ConsultIllness>({
   consultFlag: undefined,
   pictures: []
 })
-const illnessTimeOptions = [
-  {
-    label: '一周内',
-    value: ConsultTime.Week
-  },
-  {
-    label: '一月内',
-    value: ConsultTime.Month
-  },
-  {
-    label: '半年内',
-    value: ConsultTime.HalfYear
-  },
-  {
-    label: '大于半年',
-    value: ConsultTime.More
-  }
-]
-const consultFlagOptions = [
-  {
-    label: '就诊过',
-    value: 1
-  },
-  {
-    label: '没就诊过',
-    value: 0
-  }
-]
+
 const fileList = ref<Image[]>([])
 const afterRead: UploaderAfterRead = async (file) => {
   if (Array.isArray(file)) return
