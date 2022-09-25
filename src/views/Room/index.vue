@@ -5,15 +5,18 @@ import RoomMessage from './components/RoomMessage.vue'
 
 import { io } from 'socket.io-client'
 import type { Socket } from 'socket.io-client'
-import { onMounted, onUnmounted } from 'vue'
+import type { TimeMessages, Message } from '@/types/room'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
+import { MsgType } from '@/enums'
 
 const store = useUserStore()
 const route = useRoute()
 
 let socket: Socket
+const list = ref<Message[]>([])
 onMounted(() => {
   socket = io(baseURL, {
     auth: { token: `Bearer ${store.user.token}` },
@@ -34,6 +37,22 @@ onMounted(() => {
   socket.on('disconnect', () => {
     // 已经断开连接
     console.log('disconnect')
+  })
+  socket.on('chatMsgList', (res: { data: TimeMessages[] }) => {
+    const msgs: Message[] = []
+    res.data.forEach((item) => {
+      msgs.push({
+        id: item.createTime,
+        msgType: MsgType.Notify,
+        createTime: item.createTime,
+        msg: {
+          content: item.createTime
+        }
+      })
+      msgs.push(...item.items)
+    })
+    // console.log(msgs)
+    list.value.unshift(...msgs)
   })
 })
 
