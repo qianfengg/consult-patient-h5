@@ -10,7 +10,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
-import { MsgType } from '@/enums'
+import { MsgType, OrderType } from '@/enums'
 import type { ConsultOrderItem } from '@/types/consult'
 import { getConsultOrderDetail } from '@/services/consult'
 
@@ -20,6 +20,11 @@ const route = useRoute()
 let socket: Socket
 const list = ref<Message[]>([])
 const consult = ref<ConsultOrderItem>({} as ConsultOrderItem)
+const requestOrderDetail = async () => {
+  const res = await getConsultOrderDetail(route.query.orderId as string)
+  // console.log(res.data);
+  consult.value = res.data
+}
 onMounted(async () => {
   socket = io(baseURL, {
     auth: { token: `Bearer ${store.user.token}` },
@@ -57,9 +62,10 @@ onMounted(async () => {
     // console.log(msgs)
     list.value.unshift(...msgs)
   })
-  const res = await getConsultOrderDetail(route.query.orderId as string)
-  // console.log(res.data);
-  consult.value = res.data
+  socket.on('statusChange', () => {
+    requestOrderDetail()
+  })
+  requestOrderDetail()
 })
 
 onUnmounted(() => {
@@ -70,9 +76,9 @@ onUnmounted(() => {
 <template>
   <div class="room-page">
     <cp-nav-bar title="问诊室" />
-    <room-status></room-status>
+    <room-status :status="consult.status" :countdown="consult.countdown"></room-status>
     <room-message :list="list"></room-message>
-    <room-action></room-action>
+    <room-action :disabled="consult.status !== OrderType.ConsultChat"></room-action>
   </div>
 </template>
 
