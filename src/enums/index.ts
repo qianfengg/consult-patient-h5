@@ -30,3 +30,16 @@ export enum PrescriptionStatus {
   Payment = 2,
   Invalid = 3
 }
+
+export enum OrderType {
+  ConsultPay = 1,
+  ConsultWait = 2,
+  ConsultChat = 3,
+  ConsultComplete = 4,
+  ConsultCancel = 5,
+  MedicinePay = 10,
+  MedicineSend = 11,
+  MedicineTake = 12,
+  MedicineComplete = 13,
+  MedicineCancel = 14
+}

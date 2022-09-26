@@ -11,13 +11,16 @@ import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { MsgType } from '@/enums'
+import type { ConsultOrderItem } from '@/types/consult'
+import { getConsultOrderDetail } from '@/services/consult'
 
 const store = useUserStore()
 const route = useRoute()
 
 let socket: Socket
 const list = ref<Message[]>([])
-onMounted(() => {
+const consult = ref<ConsultOrderItem>({} as ConsultOrderItem)
+onMounted(async () => {
   socket = io(baseURL, {
     auth: { token: `Bearer ${store.user.token}` },
     query: {
@@ -54,6 +57,9 @@ onMounted(() => {
     // console.log(msgs)
     list.value.unshift(...msgs)
   })
+  const res = await getConsultOrderDetail(route.query.orderId as string)
+  // console.log(res.data);
+  consult.value = res.data
 })
 
 onUnmounted(() => {
