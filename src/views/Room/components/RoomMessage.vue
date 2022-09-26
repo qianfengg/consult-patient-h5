@@ -4,6 +4,8 @@ import { ConsultTime, MsgType } from '@/enums'
 import { consultFlagOptions, illnessTimeOptions } from '@/services/constants'
 import type { Image } from '@/types/consult'
 import { ImagePreview } from 'vant'
+import { useUserStore } from '@/stores'
+import dayjs from 'dayjs'
 
 // ImagePreview(['https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg'])
 
@@ -21,10 +23,12 @@ const previewImg = (imgs?: Image[]) => {
     ImagePreview(imgs.map((img) => img.url))
   }
 }
+const store = useUserStore()
+const formatTime = (time) => dayjs(time).format('HH:mm')
 </script>
 
 <template>
-  <template v-for="{ id, msg, msgType } in list" :key="id">
+  <template v-for="{ id, msg, msgType, from, createTime, fromAvatar } in list" :key="id">
     <div class="msg msg-illness" v-if="msgType === MsgType.CardPat">
       <div class="patient van-hairline--bottom">
         <p>
@@ -55,13 +59,13 @@ const previewImg = (imgs?: Image[]) => {
         <span>{{ msg.content }}</span>
       </div>
     </div>
-    <!-- <div class="msg msg-to">
+    <div class="msg msg-to" v-if="msgType === MsgType.MsgText && from === store.user.id">
       <div class="content">
-        <div class="time">20:12</div>
-        <div class="pao">大夫你好？</div>
+        <div class="time">{{ formatTime(createTime) }}</div>
+        <div class="pao">{{ msg.content }}</div>
       </div>
-      <van-image src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg" />
-    </div> -->
+      <van-image :src="store.user.avatar" />
+    </div>
     <!-- <div class="msg msg-to">
       <div class="content">
         <div class="time">20:12</div>
@@ -72,13 +76,13 @@ const previewImg = (imgs?: Image[]) => {
       </div>
       <van-image src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg" />
     </div> -->
-    <!-- <div class="msg msg-from">
-      <van-image src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg" />
+    <div class="msg msg-from" v-if="msgType === MsgType.MsgText && from !== store.user.id">
+      <van-image :src="fromAvatar" />
       <div class="content">
-        <div class="time">20:12</div>
-        <div class="pao">哪里不舒服</div>
+        <div class="time">{{ formatTime(createTime) }}</div>
+        <div class="pao">{{ msg.content }}</div>
       </div>
-    </div> -->
+    </div>
     <!-- <div class="msg msg-from">
       <van-image src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg" />
       <div class="content">

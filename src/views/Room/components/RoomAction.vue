@@ -5,6 +5,7 @@ defineProps<{
   disabled: boolean
 }>()
 const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
   (e: 'send-text', val: string): void
 }>()
 const text = ref('')

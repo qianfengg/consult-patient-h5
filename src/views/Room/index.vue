@@ -6,7 +6,7 @@ import RoomMessage from './components/RoomMessage.vue'
 import { io } from 'socket.io-client'
 import type { Socket } from 'socket.io-client'
 import type { TimeMessages, Message } from '@/types/room'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
@@ -75,6 +75,12 @@ onMounted(async () => {
   })
   socket.on('statusChange', () => {
     requestOrderDetail()
+  })
+  socket.on('receiveChatMsg', async (res: Message) => {
+    // console.log(res)
+    list.value.push(res)
+    await nextTick()
+    window.scrollTo(0, document.body.scrollHeight)
   })
   requestOrderDetail()
 })
