@@ -24,7 +24,10 @@ const previewImg = (imgs?: Image[]) => {
   }
 }
 const store = useUserStore()
-const formatTime = (time) => dayjs(time).format('HH:mm')
+const formatTime = (time: number) => dayjs(time).format('HH:mm')
+const loadFinish = () => {
+  window.scrollTo(0, document.body.scrollHeight)
+}
 </script>
 
 <template>
@@ -66,16 +69,13 @@ const formatTime = (time) => dayjs(time).format('HH:mm')
       </div>
       <van-image :src="store.user.avatar" />
     </div>
-    <!-- <div class="msg msg-to">
+    <div class="msg msg-to" v-if="msgType === MsgType.MsgImage && from === store.user.id">
       <div class="content">
-        <div class="time">20:12</div>
-        <van-image
-          fit="contain"
-          src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
-        />
+        <div class="time">{{ formatTime(createTime) }}</div>
+        <van-image fit="contain" :src="msg.picture?.url" @load="loadFinish" />
       </div>
-      <van-image src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg" />
-    </div> -->
+      <van-image :src="store.user.avatar" />
+    </div>
     <div class="msg msg-from" v-if="msgType === MsgType.MsgText && from !== store.user.id">
       <van-image :src="fromAvatar" />
       <div class="content">
@@ -83,15 +83,13 @@ const formatTime = (time) => dayjs(time).format('HH:mm')
         <div class="pao">{{ msg.content }}</div>
       </div>
     </div>
-    <!-- <div class="msg msg-from">
-      <van-image src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg" />
+    <div class="msg msg-from" v-if="msgType === MsgType.MsgImage && from !== store.user.id">
+      <van-image :src="fromAvatar" />
       <div class="content">
-        <div class="time">20:12</div>
-        <van-image
-          src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
-        />
+        <div class="time">{{ formatTime(createTime) }}</div>
+        <van-image :src="msg.picture?.url" @load="loadFinish" />
       </div>
-    </div> -->
+    </div>
     <!-- <div class="msg msg-recipe">
       <div class="content">
         <div class="head van-hairline--bottom">

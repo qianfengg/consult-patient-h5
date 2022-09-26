@@ -11,7 +11,7 @@ import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { MsgType, OrderType } from '@/enums'
-import type { ConsultOrderItem } from '@/types/consult'
+import type { ConsultOrderItem, Image } from '@/types/consult'
 import { getConsultOrderDetail } from '@/services/consult'
 
 const store = useUserStore()
@@ -89,13 +89,23 @@ onUnmounted(() => {
   socket.close()
 })
 const sendTextFn = (val: string) => {
-  console.log(val)
+  // console.log(val)
   socket.emit('sendChatMsg', {
     from: store.user.id,
     to: consult.value.docInfo?.id,
     msgType: MsgType.MsgText,
     msg: {
       content: val
+    }
+  })
+}
+const sendImageFn = (img: Image) => {
+  socket.emit('sendChatMsg', {
+    from: store.user.id,
+    to: consult.value.docInfo?.id,
+    msgType: MsgType.MsgImage,
+    msg: {
+      picture: img
     }
   })
 }
@@ -108,6 +118,7 @@ const sendTextFn = (val: string) => {
     <room-message :list="list"></room-message>
     <room-action
       @send-text="sendTextFn"
+      @send-image="sendImageFn"
       :disabled="consult.status !== OrderType.ConsultChat"
     ></room-action>
   </div>
