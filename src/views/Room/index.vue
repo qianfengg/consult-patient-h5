@@ -17,6 +17,17 @@ import { getConsultOrderDetail } from '@/services/consult'
 const store = useUserStore()
 const route = useRoute()
 
+// chatMsgList 接收聊天记录
+
+// sendChatMsg 发送消息
+
+// receiveChatMsg 接收消息
+
+// updateMsgStatus 消息已读
+
+// getChatMsgList 获取聊天记录
+
+// statusChange 接收订单状态改变
 let socket: Socket
 const list = ref<Message[]>([])
 const consult = ref<ConsultOrderItem>({} as ConsultOrderItem)
@@ -71,6 +82,17 @@ onMounted(async () => {
 onUnmounted(() => {
   socket.close()
 })
+const sendTextFn = (val: string) => {
+  console.log(val)
+  socket.emit('sendChatMsg', {
+    from: store.user.id,
+    to: consult.value.docInfo?.id,
+    msgType: MsgType.MsgText,
+    msg: {
+      content: val
+    }
+  })
+}
 </script>
 
 <template>
@@ -78,7 +100,10 @@ onUnmounted(() => {
     <cp-nav-bar title="问诊室" />
     <room-status :status="consult.status" :countdown="consult.countdown"></room-status>
     <room-message :list="list"></room-message>
-    <room-action :disabled="consult.status !== OrderType.ConsultChat"></room-action>
+    <room-action
+      @send-text="sendTextFn"
+      :disabled="consult.status !== OrderType.ConsultChat"
+    ></room-action>
   </div>
 </template>
 
