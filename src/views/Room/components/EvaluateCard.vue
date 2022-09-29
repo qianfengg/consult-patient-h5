@@ -14,7 +14,6 @@ const content = ref('')
 const anonymousFlag = ref(false)
 const consult = inject<Ref<ConsultOrderItem>>('consult')
 const disabled = computed(() => !score.value || !content.value)
-// eslint-disable-next-line no-unused-vars
 const completeEva = inject<(score: number) => void>('completeEva')
 const submit = async () => {
   //   console.log(consult?.value.id, consult?.value.docInfo?.id)

@@ -7,7 +7,6 @@ defineProps<{
   modelValue?: number | string
 }>()
 const emit = defineEmits<{
-  // eslint-disable-next-line no-unused-vars
   (e: 'update:modelValue', val: number | string): void
 }>()
 </script>
