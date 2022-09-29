@@ -8,6 +8,7 @@ import { useUserStore } from '@/stores'
 import dayjs from 'dayjs'
 import { getPrescriptionPic } from '@/services/consult'
 import { useRouter } from 'vue-router'
+import EvaluateCard from './EvaluateCard.vue'
 
 // ImagePreview(['https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg'])
 
@@ -134,6 +135,9 @@ const buy = (prescription?: Prescription) => {
         </div>
         <div class="foot"><span @click="buy(msg.prescription)">购买药品</span></div>
       </div>
+    </div>
+    <div class="msg" v-if="msgType === MsgType.CardEva || msgType === MsgType.CardEvaForm">
+      <evaluate-card :evaluateDoc="msg.evaluateDoc"></evaluate-card>
     </div>
     <!-- <div class="msg msg-tip msg-tip-cancel">
       <div class="content">
