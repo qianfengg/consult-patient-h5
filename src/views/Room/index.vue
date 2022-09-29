@@ -87,6 +87,9 @@ onMounted(async () => {
     }
     await nextTick()
     if (init.value) {
+      const id = msgs[msgs.length - 1].id
+      // console.log('init', id)
+      socket.emit('updateMsgStatus', id)
       window.scrollTo(0, document.body.scrollHeight)
       init.value = false
     }
@@ -98,6 +101,7 @@ onMounted(async () => {
     // console.log(res)
     list.value.push(res)
     await nextTick()
+    socket.emit('updateMsgStatus', res.id)
     window.scrollTo(0, document.body.scrollHeight)
   })
   requestOrderDetail()
