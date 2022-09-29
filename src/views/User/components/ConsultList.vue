@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ConsultType } from '@/enums';
-import { getConsultOrderList } from '@/services/consult';
-import type { ConsultOrderItem, ConsultOrderListParams } from '@/types/consult';
-import { ref } from 'vue';
+import type { ConsultType } from '@/enums'
+import { getConsultOrderList } from '@/services/consult'
+import type { ConsultOrderItem, ConsultOrderListParams } from '@/types/consult'
+import { ref } from 'vue'
 import ConsultItem from './ConsultItem.vue'
 const props = defineProps<{
   type: ConsultType
@@ -17,9 +17,9 @@ const params = ref<ConsultOrderListParams>({
 const list = ref<ConsultOrderItem[]>([])
 const onLoad = async () => {
   // console.log('load');
-  const res = await getConsultOrderList(params.value) 
-  list.value.push(...res.data.rows) 
-  loading.value = false;
+  const res = await getConsultOrderList(params.value)
+  list.value.push(...res.data.rows)
+  loading.value = false
   if (params.value.current < res.data.pageTotal) {
     params.value.current++
   } else {
@@ -30,7 +30,7 @@ const onLoad = async () => {
 
 <template>
   <div class="consult-list">
-    <van-list 
+    <van-list
       v-model:loading="loading"
       :finished="finished"
       finished-text="没有更多了"

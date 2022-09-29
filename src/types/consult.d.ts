@@ -148,4 +148,3 @@ export type ConsultOrderPage = {
   total: number
   rows: ConsultOrderItem[]
 }
-
