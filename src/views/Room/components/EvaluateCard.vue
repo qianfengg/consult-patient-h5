@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { evaluateConsultOrder } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
 import type { EvaluateDoc } from '@/types/room'
+import { Toast } from 'vant'
 import { computed, inject, ref, type Ref } from 'vue'
 
 defineProps<{
@@ -12,8 +14,25 @@ const content = ref('')
 const anonymousFlag = ref(false)
 const consult = inject<Ref<ConsultOrderItem>>('consult')
 const disabled = computed(() => !score.value || !content.value)
-const submit = () => {
-  console.log(consult?.value.id, consult?.value.docInfo?.id)
+// eslint-disable-next-line no-unused-vars
+const completeEva = inject<(score: number) => void>('completeEva')
+const submit = async () => {
+  //   console.log(consult?.value.id, consult?.value.docInfo?.id)
+  if (!score.value) return Toast('请评价分数')
+  if (!content.value) return Toast('请填写评价')
+  if (!consult) return Toast('未找到订单')
+  const docId = consult.value.docInfo?.id
+  if (docId) {
+    await evaluateConsultOrder({
+      docId,
+      orderId: consult.value.id,
+      score: score.value,
+      content: content.value,
+      anonymousFlag: anonymousFlag.value ? 1 : 0
+    })
+    // 修改祖父数据
+    completeEva && completeEva(score.value)
+  }
 }
 </script>
 

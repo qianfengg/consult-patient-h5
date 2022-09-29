@@ -153,6 +153,15 @@ const onRefresh = () => {
 }
 const time = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
 provide('consult', consult)
+const completeEva = (score: number) => {
+  // evaluateDoc score
+  const item = list.value.find((item) => item.msgType === MsgType.CardEvaForm)
+  if (item) {
+    item.msg.evaluateDoc = { score }
+    item.msgType = MsgType.CardEva
+  }
+}
+provide('completeEva', completeEva)
 </script>
 
 <template>
