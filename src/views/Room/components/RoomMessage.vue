@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { Message } from '@/types/room'
-import { ConsultTime, MsgType } from '@/enums'
+import type { Message, Prescription } from '@/types/room'
+import { ConsultTime, MsgType, PrescriptionStatus } from '@/enums'
 import { consultFlagOptions, illnessTimeOptions } from '@/services/constants'
 import type { Image } from '@/types/consult'
-import { ImagePreview } from 'vant'
+import { ImagePreview, Toast } from 'vant'
 import { useUserStore } from '@/stores'
 import dayjs from 'dayjs'
 import { getPrescriptionPic } from '@/services/consult'
+import { useRouter } from 'vue-router'
 
 // ImagePreview(['https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg'])
 
@@ -33,6 +34,16 @@ const showPrescription = async (id?: string) => {
   if (id) {
     const res = await getPrescriptionPic(id)
     ImagePreview([res.data.url])
+  }
+}
+const router = useRouter()
+const buy = (prescription?: Prescription) => {
+  if (prescription) {
+    if (prescription.status === PrescriptionStatus.Invalid) return Toast('处方已失效')
+    if (prescription.status === PrescriptionStatus.NotPayment && !prescription.orderId) {
+      return router.push(`/order/pay?id=${prescription.id}`)
+    }
+    router.push(`/order/${prescription.orderId}`)
   }
 }
 </script>
@@ -121,7 +132,7 @@ const showPrescription = async (id?: string) => {
             <div class="num">x{{ med.quantity }}</div>
           </div>
         </div>
-        <div class="foot"><span>购买药品</span></div>
+        <div class="foot"><span @click="buy(msg.prescription)">购买药品</span></div>
       </div>
     </div>
     <!-- <div class="msg msg-tip msg-tip-cancel">
