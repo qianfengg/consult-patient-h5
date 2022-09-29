@@ -6,7 +6,7 @@ import RoomMessage from './components/RoomMessage.vue'
 import { io } from 'socket.io-client'
 import type { Socket } from 'socket.io-client'
 import type { TimeMessages, Message } from '@/types/room'
-import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
@@ -152,6 +152,7 @@ const onRefresh = () => {
   socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
 }
 const time = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
+provide('consult', consult)
 </script>
 
 <template>

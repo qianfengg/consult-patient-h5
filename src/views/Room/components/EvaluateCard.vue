@@ -1,9 +1,20 @@
 <script setup lang="ts">
+import type { ConsultOrderItem } from '@/types/consult'
 import type { EvaluateDoc } from '@/types/room'
+import { computed, inject, ref, type Ref } from 'vue'
 
 defineProps<{
   evaluateDoc?: EvaluateDoc
 }>()
+// docId orderId
+const score = ref(0)
+const content = ref('')
+const anonymousFlag = ref(false)
+const consult = inject<Ref<ConsultOrderItem>>('consult')
+const disabled = computed(() => !score.value || !content.value)
+const submit = () => {
+  console.log(consult?.value.id, consult?.value.docInfo?.id)
+}
 </script>
 
 <template>
@@ -11,7 +22,7 @@ defineProps<{
     <p class="title">医生服务评价</p>
     <p class="desc">我们会更加努力提升服务质量</p>
     <van-rate
-      :modelValue="3"
+      :modelValue="evaluateDoc.score"
       size="7vw"
       gutter="3vw"
       color="#FADB14"
@@ -28,6 +39,7 @@ defineProps<{
       color="#FADB14"
       void-icon="star"
       void-color="rgba(0,0,0,0.04)"
+      v-model="score"
     />
     <van-field
       type="textarea"
@@ -35,10 +47,13 @@ defineProps<{
       show-word-limit
       rows="3"
       placeholder="请描述您对医生的评价或是在医生看诊过程中遇到的问题"
+      v-model="content"
     ></van-field>
     <div class="footer">
-      <van-checkbox>匿名评价</van-checkbox>
-      <van-button type="primary" size="small" round> 提交评价 </van-button>
+      <van-checkbox v-model="anonymousFlag">匿名评价</van-checkbox>
+      <van-button @click="submit" :class="{ disabled }" type="primary" size="small" round>
+        提交评价
+      </van-button>
     </div>
   </div>
 </template>
