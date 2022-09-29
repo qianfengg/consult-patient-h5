@@ -1,10 +1,43 @@
 <script setup lang="ts">
+import type { ConsultType } from '@/enums';
+import { getConsultOrderList } from '@/services/consult';
+import type { ConsultOrderItem, ConsultOrderListParams } from '@/types/consult';
+import { ref } from 'vue';
 import ConsultItem from './ConsultItem.vue'
+const props = defineProps<{
+  type: ConsultType
+}>()
+const loading = ref(false)
+const finished = ref(false)
+const params = ref<ConsultOrderListParams>({
+  pageSize: 5,
+  current: 1,
+  type: props.type
+})
+const list = ref<ConsultOrderItem[]>([])
+const onLoad = async () => {
+  // console.log('load');
+  const res = await getConsultOrderList(params.value) 
+  list.value.push(...res.data.rows) 
+  loading.value = false;
+  if (params.value.current < res.data.pageTotal) {
+    params.value.current++
+  } else {
+    finished.value = true
+  }
+}
 </script>
 
 <template>
   <div class="consult-list">
-    <consult-item v-for="i in 5" :key="i" />
+    <van-list 
+      v-model:loading="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <consult-item v-for="item in list" :key="item.id" :item="item" />
+    </van-list>
   </div>
 </template>
 
