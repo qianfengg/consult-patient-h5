@@ -13,6 +13,8 @@ import { useRoute } from 'vue-router'
 import { MsgType, OrderType } from '@/enums'
 import type { ConsultOrderItem, Image } from '@/types/consult'
 import { getConsultOrderDetail } from '@/services/consult'
+import dayjs from 'dayjs'
+import { Toast } from 'vant'
 
 const store = useUserStore()
 const route = useRoute()
@@ -46,6 +48,7 @@ onMounted(async () => {
   socket.on('connect', () => {
     // 建立连接成功
     console.log('connect')
+    list.value = []
   })
 
   socket.on('error', () => {
@@ -57,9 +60,12 @@ onMounted(async () => {
     // 已经断开连接
     console.log('disconnect')
   })
-  socket.on('chatMsgList', (res: { data: TimeMessages[] }) => {
+  socket.on('chatMsgList', async (res: { data: TimeMessages[] }) => {
     const msgs: Message[] = []
-    res.data.forEach((item) => {
+    res.data.forEach((item, i) => {
+      if (i === 0) {
+        time.value = item.createTime
+      }
       msgs.push({
         id: item.createTime,
         msgType: MsgType.Notify,
@@ -72,6 +78,15 @@ onMounted(async () => {
     })
     // console.log(msgs)
     list.value.unshift(...msgs)
+    loading.value = false
+    if (res.data.length === 0) {
+      return Toast('没有聊天记录了')
+    }
+    await nextTick()
+    if (init.value) {
+      window.scrollTo(0, document.body.scrollHeight)
+      init.value = false
+    }
   })
   socket.on('statusChange', () => {
     requestOrderDetail()
@@ -109,13 +124,36 @@ const sendImageFn = (img: Image) => {
     }
   })
 }
+
+// 实现下拉刷新效果
+// 记录每段消息的开始时间，作为下一次请求的开始时间
+// 触发刷新，发送获取聊天记录消息
+// 在接收聊天记录事件中
+// 关闭刷新中效果
+// 判断是否有数据？没有提示 没有聊天记录了
+// 如果是初始化获取的聊天，需要滚动到最底部
+// 如果是第二，三...次获取消息,不需要滚动到底部
+// 如果断开连接后再次连接，需要清空聊天记录
+const init = ref(true)
+const loading = ref(false)
+const onRefresh = () => {
+  // console.log('refresh')
+  // setTimeout(() => {
+  //   loading.value = false
+  // }, 2000)
+  //向socket服务端发送数据 参数：pageSize: number, lastTime: string, orderId: string
+  socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
+}
+const time = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
 </script>
 
 <template>
   <div class="room-page">
     <cp-nav-bar title="问诊室" />
     <room-status :status="consult.status" :countdown="consult.countdown"></room-status>
-    <room-message :list="list"></room-message>
+    <van-pull-refresh v-model="loading" @refresh="onRefresh">
+      <room-message :list="list"></room-message>
+    </van-pull-refresh>
     <room-action
       @send-text="sendTextFn"
       @send-image="sendImageFn"
