@@ -139,3 +139,13 @@ export type ConsultOrderItem = Consult & {
   pointDeduction: number
   actualPayment: number
 }
+
+export type ConsultOrderListParams = PageParams & {
+  type: ConsultType
+}
+export type ConsultOrderPage = {
+  pageTotal: number
+  total: number
+  rows: ConsultOrderItem[]
+}
+

@@ -10,7 +10,9 @@ import type {
   ConsultOrderPreParams,
   ConsultOrderPreData,
   PartialConsult,
-  ConsultOrderItem
+  ConsultOrderItem,
+  ConsultOrderListParams,
+  ConsultOrderPage
 } from './../types/consult.d'
 export const getKnowledgePage = (params: KnowledgeParams) => {
   return request<KnowledgePage>('patient/home/knowledge', 'GET', params)
@@ -73,4 +75,9 @@ export const evaluateConsultOrder = (data: {
   anonymousFlag: 0 | 1
 }) => {
   return request('patient/order/evaluate', 'POST', data)
+}
+
+// 问诊记录分页数据
+export const getConsultOrderList = (params: ConsultOrderListParams) => {
+  return request<ConsultOrderPage>('patient/consult/order/list', 'get', params)
 }
