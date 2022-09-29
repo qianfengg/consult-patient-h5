@@ -74,7 +74,10 @@ onMounted(async () => {
           content: item.createTime
         }
       })
-      msgs.push(...item.items)
+      // msgs.push(...item.items)
+      item.items.forEach((msg) => {
+        msgs.push({ ...msg, notScroll: !init.value })
+      })
     })
     // console.log(msgs)
     list.value.unshift(...msgs)

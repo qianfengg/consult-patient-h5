@@ -52,6 +52,7 @@ export type Message = {
     prescription?: Prescription
     evaluateDoc?: EvaluateDoc
   }
+  notScroll?: boolean
 }
 
 export type TimeMessages = {

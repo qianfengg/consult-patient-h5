@@ -24,14 +24,14 @@ const previewImg = (imgs?: Image[]) => {
   }
 }
 const store = useUserStore()
-const formatTime = (time: number) => dayjs(time).format('HH:mm')
-const loadFinish = () => {
-  window.scrollTo(0, document.body.scrollHeight)
+const formatTime = (time: string) => dayjs(time).format('HH:mm')
+const loadFinish = (notScroll?: boolean) => {
+  !notScroll && window.scrollTo(0, document.body.scrollHeight)
 }
 </script>
 
 <template>
-  <template v-for="{ id, msg, msgType, from, createTime, fromAvatar } in list" :key="id">
+  <template v-for="{ id, msg, msgType, from, createTime, fromAvatar, notScroll } in list" :key="id">
     <div class="msg msg-illness" v-if="msgType === MsgType.CardPat">
       <div class="patient van-hairline--bottom">
         <p>
@@ -72,7 +72,7 @@ const loadFinish = () => {
     <div class="msg msg-to" v-if="msgType === MsgType.MsgImage && from === store.user.id">
       <div class="content">
         <div class="time">{{ formatTime(createTime) }}</div>
-        <van-image fit="contain" :src="msg.picture?.url" @load="loadFinish" />
+        <van-image fit="contain" :src="msg.picture?.url" @load="loadFinish(notScroll)" />
       </div>
       <van-image :src="store.user.avatar" />
     </div>
@@ -87,7 +87,7 @@ const loadFinish = () => {
       <van-image :src="fromAvatar" />
       <div class="content">
         <div class="time">{{ formatTime(createTime) }}</div>
-        <van-image :src="msg.picture?.url" @load="loadFinish" />
+        <van-image :src="msg.picture?.url" @load="loadFinish(notScroll)" />
       </div>
     </div>
     <!-- <div class="msg msg-recipe">
