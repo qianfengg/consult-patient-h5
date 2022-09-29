@@ -59,3 +59,7 @@ export const getConsultOrderDetail = (orderId: string) => {
     orderId
   })
 }
+
+export const getPrescriptionPic = (id: string) => {
+  return request<{ url: string }>(`patient/consult/prescription/${id}`)
+}

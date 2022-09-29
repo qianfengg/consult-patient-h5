@@ -6,6 +6,7 @@ import type { Image } from '@/types/consult'
 import { ImagePreview } from 'vant'
 import { useUserStore } from '@/stores'
 import dayjs from 'dayjs'
+import { getPrescriptionPic } from '@/services/consult'
 
 // ImagePreview(['https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg'])
 
@@ -27,6 +28,12 @@ const store = useUserStore()
 const formatTime = (time: string) => dayjs(time).format('HH:mm')
 const loadFinish = (notScroll?: boolean) => {
   !notScroll && window.scrollTo(0, document.body.scrollHeight)
+}
+const showPrescription = async (id?: string) => {
+  if (id) {
+    const res = await getPrescriptionPic(id)
+    ImagePreview([res.data.url])
+  }
 }
 </script>
 
@@ -90,28 +97,33 @@ const loadFinish = (notScroll?: boolean) => {
         <van-image :src="msg.picture?.url" @load="loadFinish(notScroll)" />
       </div>
     </div>
-    <!-- <div class="msg msg-recipe">
+    <div class="msg msg-recipe" v-if="msgType === MsgType.CardPre">
       <div class="content">
         <div class="head van-hairline--bottom">
           <div class="head-tit">
             <h3>电子处方</h3>
-            <p>原始处方 <van-icon name="arrow"></van-icon></p>
+            <p @click="showPrescription(msg.prescription?.id)">
+              原始处方 <van-icon name="arrow"></van-icon>
+            </p>
           </div>
-          <p>李富贵 男 31岁 血管性头痛</p>
-          <p>开方时间：2022-01-15 14:21:42</p>
+          <p>
+            {{ msg.prescription?.name }} {{ msg.prescription?.genderValue }}
+            {{ msg.prescription?.age }}岁 {{ msg.prescription?.diagnosis }}
+          </p>
+          <p>开方时间：{{ msg.prescription?.createTime }}</p>
         </div>
         <div class="body">
-          <div class="body-item" v-for="i in 2" :key="i">
+          <div class="body-item" v-for="med in msg.prescription?.medicines" :key="med.id">
             <div class="durg">
-              <p>优赛明 维生素E乳</p>
-              <p>口服，每次1袋，每天3次，用药3天</p>
+              <p>{{ med.name }} {{ med.specs }}</p>
+              <p>{{ med.usageDosag }}</p>
             </div>
-            <div class="num">x1</div>
+            <div class="num">x{{ med.quantity }}</div>
           </div>
         </div>
         <div class="foot"><span>购买药品</span></div>
       </div>
-    </div> -->
+    </div>
     <!-- <div class="msg msg-tip msg-tip-cancel">
       <div class="content">
         <span>订单取消</span>
