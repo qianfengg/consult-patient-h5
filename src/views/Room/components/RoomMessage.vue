@@ -1,27 +1,21 @@
 <script setup lang="ts">
 import type { Message, Prescription } from '@/types/room'
-import { ConsultTime, MsgType, PrescriptionStatus } from '@/enums'
-import { consultFlagOptions, illnessTimeOptions } from '@/services/constants'
+import { MsgType, PrescriptionStatus } from '@/enums'
 import type { Image } from '@/types/consult'
 import { ImagePreview, Toast } from 'vant'
 import { useUserStore } from '@/stores'
 import dayjs from 'dayjs'
-import { getPrescriptionPic } from '@/services/consult'
 import { useRouter } from 'vue-router'
 import EvaluateCard from './EvaluateCard.vue'
 import { useShowPresciption } from '@/composable'
+import { illnessTimeText, consultFlagText } from '@/utils/filter'
 
 // ImagePreview(['https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg'])
 
 defineProps<{
   list: Message[]
 }>()
-const consultFlagText = (flag?: 0 | 1) => {
-  return consultFlagOptions.find((item) => item.value === flag)?.label
-}
-const illnessTimeText = (time?: ConsultTime) => {
-  return illnessTimeOptions.find((item) => item.value === time)?.label
-}
+
 const previewImg = (imgs?: Image[]) => {
   if (imgs && imgs.length) {
     ImagePreview(imgs.map((img) => img.url))

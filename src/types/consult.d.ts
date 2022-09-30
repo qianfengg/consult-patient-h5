@@ -1,4 +1,5 @@
 import { ConsultType, ConsultTime } from '@/enums'
+import { Patient } from './user'
 
 // 图片列表
 export type Image = {
