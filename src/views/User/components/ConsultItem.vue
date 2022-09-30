@@ -5,8 +5,9 @@ import { ref } from 'vue'
 import { cancelOrder, deleteOrder } from '@/services/consult'
 import { Toast } from 'vant'
 import { useShowPresciption } from '@/composable'
+import CpConsultMore from '../../../components/cp-consult-more.vue'
 
-const props = defineProps<{
+defineProps<{
   item: ConsultOrderItem
 }>()
 
@@ -15,18 +16,18 @@ const props = defineProps<{
 // 咨询中：查看处方（如果开了）+继续沟通
 // 已完成：更多（查看处方，如果开了，删除订单）+问诊记录+（未评价?写评价:查看评价）
 // 已取消：删除订单+咨询其他医生
-const showPopover = ref(false)
+// const showPopover = ref(false)
 const { showPrescription } = useShowPresciption()
 
-const actions = [{ text: '查看处方', disabled: !props.item.prescriptionId }, { text: '删除订单' }]
-const onSelect = (action: { text: string }, index: number) => {
-  if (index === 1) {
-    deleteOrderHandler(props.item)
-  }
-  if (index === 0) {
-    showPrescription(props.item.prescriptionId)
-  }
-}
+// const actions = [{ text: '查看处方', disabled: !props.item.prescriptionId }, { text: '删除订单' }]
+// const onSelect = (action: { text: string }, index: number) => {
+//   if (index === 1) {
+//     deleteOrderHandler(props.item)
+//   }
+//   if (index === 0) {
+//     showPrescription(props.item.prescriptionId)
+//   }
+// }
 
 // 取消订单
 const loading = ref(false)
@@ -125,16 +126,11 @@ const deleteOrderHandler = async (item: ConsultOrderItem) => {
       >
     </div>
     <div class="foot" v-if="item.status === OrderType.ConsultComplete">
-      <div class="more">
-        <van-popover
-          v-model:show="showPopover"
-          :actions="actions"
-          @select="onSelect"
-          placement="top-start"
-        >
-          <template #reference> 更多 </template>
-        </van-popover>
-      </div>
+      <cp-consult-more
+        :disabled="!item.prescriptionId"
+        @on-delete="deleteOrderHandler(item)"
+        @on-preview="showPrescription(item.prescriptionId)"
+      ></cp-consult-more>
       <van-button class="gray" plain size="small" round :to="`/room?orderId=${item.id}`"
         >问诊记录</van-button
       >
