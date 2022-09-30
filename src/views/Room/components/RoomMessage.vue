@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import { getPrescriptionPic } from '@/services/consult'
 import { useRouter } from 'vue-router'
 import EvaluateCard from './EvaluateCard.vue'
+import { useShowPresciption } from '@/composable'
 
 // ImagePreview(['https://fastly.jsdelivr.net/npm/@vant/assets/apple-1.jpeg'])
 
@@ -31,12 +32,8 @@ const formatTime = (time: string) => dayjs(time).format('HH:mm')
 const loadFinish = (notScroll?: boolean) => {
   !notScroll && window.scrollTo(0, document.body.scrollHeight)
 }
-const showPrescription = async (id?: string) => {
-  if (id) {
-    const res = await getPrescriptionPic(id)
-    ImagePreview([res.data.url])
-  }
-}
+
+const { showPrescription } = useShowPresciption()
 const router = useRouter()
 const buy = (prescription?: Prescription) => {
   if (prescription) {

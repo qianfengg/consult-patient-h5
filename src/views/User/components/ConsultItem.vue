@@ -4,6 +4,7 @@ import { OrderType } from '@/enums/index'
 import { ref } from 'vue'
 import { cancelOrder, deleteOrder } from '@/services/consult'
 import { Toast } from 'vant'
+import { useShowPresciption } from '@/composable'
 
 const props = defineProps<{
   item: ConsultOrderItem
@@ -15,11 +16,15 @@ const props = defineProps<{
 // 已完成：更多（查看处方，如果开了，删除订单）+问诊记录+（未评价?写评价:查看评价）
 // 已取消：删除订单+咨询其他医生
 const showPopover = ref(false)
+const { showPrescription } = useShowPresciption()
 
 const actions = [{ text: '查看处方', disabled: !props.item.prescriptionId }, { text: '删除订单' }]
 const onSelect = (action: { text: string }, index: number) => {
   if (index === 1) {
     deleteOrderHandler(props.item)
+  }
+  if (index === 0) {
+    showPrescription(props.item.prescriptionId)
   }
 }
 
