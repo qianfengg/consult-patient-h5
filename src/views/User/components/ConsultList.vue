@@ -26,6 +26,9 @@ const onLoad = async () => {
     finished.value = true
   }
 }
+const deleteFn = (id: string) => {
+  list.value = list.value.filter((item) => item.id !== id)
+}
 </script>
 
 <template>
@@ -36,7 +39,12 @@ const onLoad = async () => {
       finished-text="没有更多了"
       @load="onLoad"
     >
-      <consult-item v-for="item in list" :key="item.id" :item="item" />
+      <consult-item
+        @on-delete="deleteFn"
+        v-for="item in list"
+        :key="item.id"
+        :item="item"
+      ></consult-item>
     </van-list>
   </div>
 </template>
