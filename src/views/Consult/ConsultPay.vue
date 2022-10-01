@@ -131,30 +131,12 @@ const pay = async () => {
       @click="submit"
       :loading="loading"
     />
-    <van-action-sheet
+    <cp-pay-sheet
       v-model:show="show"
-      title="选择支付方式"
-      :closeable="false"
-      :before-close="beforeCloseFn"
-      :close-on-popstate="false"
-    >
-      <div class="pay-type">
-        <p class="amount">￥{{ orderPreData.actualPayment.toFixed(2) }}</p>
-        <van-cell-group>
-          <van-cell title="微信支付" @click="paymentMethod = 0">
-            <template #icon><cp-icon name="consult-wechat" /></template>
-            <template #extra><van-checkbox :checked="paymentMethod === 0" /></template>
-          </van-cell>
-          <van-cell title="支付宝支付" @click="paymentMethod = 1">
-            <template #icon><cp-icon name="consult-alipay" /></template>
-            <template #extra><van-checkbox :checked="paymentMethod === 1" /></template>
-          </van-cell>
-        </van-cell-group>
-        <div class="btn">
-          <van-button @click="pay" type="primary" round block>立即支付</van-button>
-        </div>
-      </div>
-    </van-action-sheet>
+      :orderId="orderId"
+      :onClose="beforeCloseFn"
+      :actual-payment="orderPreData.actualPayment"
+    ></cp-pay-sheet>
   </div>
   <div class="consult-pay-page" v-else>
     <van-skeleton title :row="3" />
