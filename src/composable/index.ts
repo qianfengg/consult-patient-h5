@@ -1,5 +1,5 @@
 import { OrderType } from '@/enums'
-import { cancelOrder, followTarget, getPrescriptionPic } from '@/services/consult'
+import { cancelOrder, deleteOrder, followTarget, getPrescriptionPic } from '@/services/consult'
 import type { ConsultOrderItem, FollowType } from '@/types/consult'
 import { ImagePreview, Toast } from 'vant'
 import { ref } from 'vue'
@@ -47,5 +47,26 @@ export const useCancleOrder = () => {
   return {
     loading,
     cancelConsultOrder
+  }
+}
+
+export const useDeleteOrder = (cb: () => void) => {
+  const deleteLoading = ref(false)
+  const deleteOrderHandler = async (item: ConsultOrderItem) => {
+    try {
+      deleteLoading.value = true
+      await deleteOrder(item.id)
+      // emit('on-delete', item.id)
+      cb?.()
+      Toast.success('删除订单成功')
+    } catch (error) {
+      Toast.fail('删除订单失败')
+    } finally {
+      deleteLoading.value = false
+    }
+  }
+  return {
+    deleteLoading,
+    deleteOrderHandler
   }
 }
