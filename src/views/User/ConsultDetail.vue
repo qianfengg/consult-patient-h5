@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { getConsultOrderDetail } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { OrderType } from '@/enums'
 import { illnessTimeText, consultFlagText } from '@/utils/filter'
 import { useCancleOrder, useDeleteOrder, useShowPresciption } from '@/composable'
+import { useClipboard } from '@vueuse/core'
+import { Toast } from 'vant'
 
 const item = ref<ConsultOrderItem>()
 const route = useRoute()
@@ -19,6 +21,16 @@ const { deleteLoading, deleteOrderHandler } = useDeleteOrder(() => {
   router.push('/user/consult')
 })
 const { showPrescription } = useShowPresciption()
+const { copy, copied, isSupported } = useClipboard()
+const onCopy = () => {
+  if (!isSupported) return Toast('不支持或请授权')
+  copy(item.value?.orderNo!)
+}
+watch(copied, (newVal) => {
+  if (newVal) {
+    return Toast.success('复制成功')
+  }
+})
 </script>
 
 <template>
@@ -62,7 +74,7 @@ const { showPrescription } = useShowPresciption()
       <van-cell-group :border="false">
         <van-cell title="订单编号">
           <template #value>
-            <span class="copy">复制</span>
+            <span class="copy" @click="onCopy">复制</span>
             {{ item.orderNo }}
           </template>
         </van-cell>
