@@ -133,9 +133,10 @@ const pay = async () => {
     />
     <cp-pay-sheet
       v-model:show="show"
-      :orderId="orderId"
+      :orderId="orderId!"
       :onClose="beforeCloseFn"
       :actual-payment="orderPreData.actualPayment"
+      :pay-callback="`http://localhost:5173/room`"
     ></cp-pay-sheet>
   </div>
   <div class="consult-pay-page" v-else>

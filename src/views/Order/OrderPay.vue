@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { getAddressList, getMedicalOrderPre } from '@/services/order'
+import { createMedicalOrder, getAddressList, getMedicalOrderPre } from '@/services/order'
 import type { AddressItem, OrderPre } from '@/types/order'
+import { Toast } from 'vant'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const orderPre = ref<OrderPre>()
 const address = ref<AddressItem>()
+const agree = ref(false)
+const orderId = ref('')
+const loading = ref(false)
 onMounted(async () => {
   const orderPreRes = await getMedicalOrderPre({ prescriptionId: route.query.id as string })
   orderPre.value = orderPreRes.data
@@ -21,6 +25,31 @@ onMounted(async () => {
     }
   }
 })
+const show = ref(false)
+// 支付功能
+const pay = async () => {
+  if (!agree.value) return Toast('请先同意协议')
+  if (!address.value) return Toast('请先选择地址')
+  if (!orderPre.value) return Toast('未找到处方')
+  if (!orderId.value) {
+    loading.value = true
+    try {
+      // 发送请求
+      const res = await createMedicalOrder({
+        id: orderPre.value.id,
+        couponId: orderPre.value.couponId,
+        addressId: address.value.id
+      })
+      orderId.value = res.data.id
+      loading.value = false
+      show.value = true
+    } catch (error) {
+      loading.value = false
+    }
+  } else {
+    show.value = true
+  }
+}
 </script>
 
 <template>
@@ -70,14 +99,21 @@ onMounted(async () => {
         由于药品的特殊性，如非错发、漏发药品的情况，药品一经发出
         不得退换，请核对药品信息无误后下单。
       </p>
-      <van-checkbox>我已同意<a href="javascript:;">支付协议</a></van-checkbox>
+      <van-checkbox v-model="agree">我已同意<a href="javascript:;">支付协议</a></van-checkbox>
     </div>
     <van-submit-bar
       :price="orderPre.actualPayment * 100"
       button-text="立即支付"
       button-type="primary"
       text-align="left"
+      @click="pay"
     ></van-submit-bar>
+    <cp-pay-sheet
+      v-model:show="show"
+      :actual-payment="orderPre.actualPayment"
+      :order-id="orderId"
+      :pay-callback="`http://localhost:5173/order/pay/result`"
+    ></cp-pay-sheet>
   </div>
 </template>
 

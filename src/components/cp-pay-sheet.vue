@@ -2,11 +2,12 @@
 import { getPayUrl } from '@/services/consult'
 import { Toast } from 'vant'
 import { ref } from 'vue'
-
+// `http://localhost:5173/room`
 const props = defineProps<{
   show: boolean
   actualPayment: number
-  orderId?: string
+  orderId: string
+  payCallback: string
   onClose?: () => void
 }>()
 const emit = defineEmits<{
@@ -20,7 +21,7 @@ const pay = async () => {
   const res = await getPayUrl({
     paymentMethod: paymentMethod.value,
     orderId: props.orderId,
-    payCallback: `http://localhost:5173/room`
+    payCallback: props.payCallback
   })
   location.href = res.data.payUrl
 }
