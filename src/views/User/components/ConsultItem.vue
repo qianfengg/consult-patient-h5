@@ -2,9 +2,9 @@
 import type { ConsultOrderItem } from '@/types/consult'
 import { OrderType } from '@/enums/index'
 import { ref } from 'vue'
-import { cancelOrder, deleteOrder } from '@/services/consult'
+import { deleteOrder } from '@/services/consult'
 import { Toast } from 'vant'
-import { useShowPresciption } from '@/composable'
+import { useCancleOrder, useShowPresciption } from '@/composable'
 import CpConsultMore from '../../../components/cp-consult-more.vue'
 
 defineProps<{
@@ -29,21 +29,7 @@ const { showPrescription } = useShowPresciption()
 //   }
 // }
 
-// 取消订单
-const loading = ref(false)
-const cancelConsultOrder = async (item: ConsultOrderItem) => {
-  loading.value = true
-  try {
-    await cancelOrder(item.id)
-    item.status = OrderType.ConsultCancel
-    item.statusValue = '已取消'
-    Toast.success('取消成功')
-  } catch (e) {
-    Toast.fail('取消失败')
-  } finally {
-    loading.value = false
-  }
-}
+const { loading, cancelConsultOrder } = useCancleOrder()
 const emit = defineEmits<{
   (e: 'on-delete', val: string): void
 }>()
