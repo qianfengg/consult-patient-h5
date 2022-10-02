@@ -52,3 +52,27 @@ export type OrderDetail = {
   actualPayment: number
   roomId: string
 }
+
+export type Express = {
+  id: string
+  content: string
+  createTime: string
+  status: ExpressStatus
+  statusValue: string
+}
+
+export type Location = {
+  longitude: string
+  latitude: string
+}
+
+export type Logistics = {
+  estimatedTime: string
+  name: string
+  awbNo: string
+  status: ExpressStatus
+  statusValue: string
+  list: Express[]
+  logisticsInfo: Location[]
+  currentLocationInfo: Location
+}
