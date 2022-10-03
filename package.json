@@ -1,7 +1,7 @@
 {
   "name": "consult-patient-h5",
   "version": "0.0.0",
-  "license": "cp-project",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
