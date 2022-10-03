@@ -4,6 +4,9 @@ import type { Logistics } from '@/types/order'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import AMapLoader from '@amap/amap-jsapi-loader'
+import startImg from '@/assets/start.png'
+import endImg from '@/assets/end.png'
+import carImg from '@/assets/car.png'
 
 window._AMapSecurityConfig = {
   securityJsCode: '415e917da833efcf2d5b69f4d821784b'
@@ -22,6 +25,53 @@ onMounted(async () => {
     const map = new AMap.Map('map', {
       mapStyle: 'amap://styles/whitesmoke',
       zoom: 12
+    })
+    AMap.plugin('AMap.Driving', function () {
+      const driving = new AMap.Driving({
+        // 驾车路线规划策略，AMap.DrivingPolicy.LEAST_TIME是最快捷模式
+        policy: AMap.DrivingPolicy.LEAST_TIME,
+        map,
+        showTraffic: false,
+        hideMarkers: true
+      })
+      const start = logistics.value?.logisticsInfo.shift()
+      const end = logistics.value?.logisticsInfo.pop()
+      const startLngLat = [start?.longitude, start?.latitude]
+      const endLngLat = [end?.longitude, end?.latitude]
+      const startMarker = new AMap.Marker({
+        icon: startImg,
+        position: startLngLat
+      })
+      map.add(startMarker)
+
+      const endMarker = new AMap.Marker({
+        icon: endImg,
+        position: endLngLat
+      })
+      map.add(endMarker)
+
+      driving.search(
+        startLngLat,
+        endLngLat,
+        {
+          waypoints: logistics.value?.logisticsInfo.map((item) => [item.longitude, item.latitude])
+        },
+        function (status: string, result: object) {
+          // 未出错时，result即是对应的路线规划方案
+          console.log(status, result)
+          const currentLocationInfo = logistics.value?.currentLocationInfo
+          const carMarker = new AMap.Marker({
+            icon: carImg,
+            position: [currentLocationInfo?.longitude, currentLocationInfo?.latitude],
+            anchor: 'center'
+          })
+          map.add(carMarker)
+          setTimeout(() => {
+            map.setFitView([carMarker])
+            map.setZoom(10)
+          }, 3000)
+        }
+      )
     })
   })
 })
