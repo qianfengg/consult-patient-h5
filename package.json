@@ -47,5 +47,8 @@
     "vite-plugin-mock": "^2.9.6",
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^0.40.7"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }
