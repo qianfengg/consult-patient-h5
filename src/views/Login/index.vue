@@ -3,7 +3,7 @@ import { loginByCode, loginByPassword, sendMobileCode } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { mobileRules, passwordRules, codeRules } from '@/utils/rules'
 import { Toast, type FormInstance } from 'vant'
-import { onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const agree = ref(false)
@@ -56,6 +56,12 @@ const send = async () => {
 }
 onUnmounted(() => {
   clearInterval(timer)
+})
+onMounted(() => {
+  // 组件渲染完毕，使用QC生成QQ登录按钮，目的得到跳转链接
+  // QC.Login({
+  //   btnId: 'qq'
+  // })
 })
 </script>
 
@@ -115,10 +121,14 @@ onUnmounted(() => {
       </div>
     </van-form>
     <div class="login-other">
+      <!-- <div class="icon" id="qq"></div> -->
       <van-divider>第三方登录</van-divider>
-      <div class="icon">
+      <a
+        href="https://graph.qq.com/oauth2.0/authorize?client_id=102015968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fconsult-patients.itheima.net%2Flogin%2Fcallback"
+        class="icon"
+      >
         <img src="@/assets/qq.svg" alt="" />
-      </div>
+      </a>
     </div>
   </div>
 </template>
