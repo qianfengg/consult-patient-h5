@@ -12,10 +12,16 @@ export const useUserStore = defineStore(
     const delUser = () => {
       user.value = {} as User
     }
+    const returnUrl = ref('')
+    const setReturnUrl = (url: string) => {
+      returnUrl.value = url
+    }
     return {
       user,
       setUser,
-      delUser
+      delUser,
+      returnUrl,
+      setReturnUrl
     }
   },
   {
