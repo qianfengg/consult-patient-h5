@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { loginByCode, loginByPassword, sendMobileCode } from '@/services/user'
+import { useSendCode } from '@/composable'
+import { loginByCode, loginByPassword } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { mobileRules, passwordRules, codeRules } from '@/utils/rules'
-import { Toast, type FormInstance } from 'vant'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { Toast } from 'vant'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const agree = ref(false)
@@ -37,32 +38,33 @@ const login = async () => {
 // 2.2 校验手机
 // 2.3 发送请求
 // 倒计时逻辑
-const time = ref(0)
-let timer: number = -1
-const form = ref<FormInstance | null>(null)
-const send = async () => {
-  if (time.value > 0) return
-  await form.value?.validate('mobile')
-  await sendMobileCode(mobile.value, 'login')
-  Toast.success('发送成功')
-  time.value = 60
-  if (timer > 0) clearInterval(timer)
-  timer = window.setInterval(() => {
-    time.value--
-    if (time.value <= 0) {
-      clearInterval(timer)
-    }
-  }, 1000)
-}
-onUnmounted(() => {
-  clearInterval(timer)
-})
+// const time = ref(0)
+// let timer: number = -1
+// const form = ref<FormInstance | null>(null)
+// const send = async () => {
+//   if (time.value > 0) return
+//   await form.value?.validate('mobile')
+//   await sendMobileCode(mobile.value, 'login')
+//   Toast.success('发送成功')
+//   time.value = 60
+//   if (timer > 0) clearInterval(timer)
+//   timer = window.setInterval(() => {
+//     time.value--
+//     if (time.value <= 0) {
+//       clearInterval(timer)
+//     }
+//   }, 1000)
+// }
+// onUnmounted(() => {
+//   clearInterval(timer)
+// })
 onMounted(() => {
   // 组件渲染完毕，使用QC生成QQ登录按钮，目的得到跳转链接
   // QC.Login({
   //   btnId: 'qq'
   // })
 })
+const { form, send, time } = useSendCode(mobile, 'login')
 </script>
 
 <template>

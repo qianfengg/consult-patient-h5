@@ -1,12 +1,13 @@
 <script setup lang="ts">
 // http://consult-patients.itheima.net/login
-import { onMounted, onUnmounted, ref } from 'vue'
-import { loginByQQ, sendMobileCode, bindMobile } from '@/services/user'
+import { onMounted, ref } from 'vue'
+import { loginByQQ, bindMobile } from '@/services/user'
 import { mobileRules, codeRules } from '@/utils/rules'
-import { Toast, type FormInstance } from 'vant'
+import { Toast } from 'vant'
 import type { User } from '@/types/user'
 import { useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import { useSendCode } from '@/composable'
 
 const openId = ref('')
 const isBind = ref(true)
@@ -49,26 +50,8 @@ const bind = async () => {
   })
   loginSuccess(res)
 }
-const time = ref(0)
-let timer: number = -1
-const form = ref<FormInstance | null>(null)
-const send = async () => {
-  if (time.value > 0) return
-  await form.value?.validate('mobile')
-  await sendMobileCode(mobile.value, 'bindMobile')
-  Toast.success('发送成功')
-  time.value = 60
-  if (timer > 0) clearInterval(timer)
-  timer = window.setInterval(() => {
-    time.value--
-    if (time.value <= 0) {
-      clearInterval(timer)
-    }
-  }, 1000)
-}
-onUnmounted(() => {
-  clearInterval(timer)
-})
+
+const { time, form, send } = useSendCode(mobile, 'bindMobile')
 </script>
 
 <template>

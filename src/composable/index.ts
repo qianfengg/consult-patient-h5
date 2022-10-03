@@ -1,10 +1,12 @@
 import { OrderType } from '@/enums'
 import { cancelOrder, deleteOrder, followTarget, getPrescriptionPic } from '@/services/consult'
 import { getMedicalOrderDetail } from '@/services/order'
+import { sendMobileCode } from '@/services/user'
 import type { ConsultOrderItem, FollowType } from '@/types/consult'
 import type { OrderDetail } from '@/types/order'
-import { ImagePreview, Toast } from 'vant'
-import { onMounted, ref } from 'vue'
+import type { CodeType } from '@/types/user'
+import { ImagePreview, Toast, type FormInstance } from 'vant'
+import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 
 export function useFollow(type: FollowType = 'doc') {
   const loading = ref(false)
@@ -89,4 +91,28 @@ export const useOrderDetail = (id: string) => {
     orderDetail,
     loading
   }
+}
+
+export const useSendCode = (mobile: Ref<string>, type: CodeType) => {
+  const time = ref(0)
+  let timer: number = -1
+  const form = ref<FormInstance | null>(null)
+  const send = async () => {
+    if (time.value > 0) return
+    await form.value?.validate('mobile')
+    await sendMobileCode(mobile.value, type)
+    Toast.success('发送成功')
+    time.value = 60
+    if (timer > 0) clearInterval(timer)
+    timer = window.setInterval(() => {
+      time.value--
+      if (time.value <= 0) {
+        clearInterval(timer)
+      }
+    }, 1000)
+  }
+  onUnmounted(() => {
+    clearInterval(timer)
+  })
+  return { time, form, send }
 }
