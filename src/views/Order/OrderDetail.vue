@@ -12,8 +12,8 @@ const { orderDetail } = useOrderDetail(route.params.id as string)
     <div class="order-head">
       <div class="card" @click="$router.push(`/order/logistics/${orderDetail?.id}`)">
         <div class="logistics">
-          <p>{{ orderDetail.expressInfo.content }}</p>
-          <p>{{ orderDetail.expressInfo.time }}</p>
+          <p>{{ orderDetail.expressInfo?.content }}</p>
+          <p>{{ orderDetail.expressInfo?.time }}</p>
         </div>
         <van-icon name="arrow" />
       </div>
