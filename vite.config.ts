@@ -32,5 +32,11 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    port: 80,
+    host: true,
+    open: true,
+    cors: true // 允许开发时 ajax 跨域
   }
 })

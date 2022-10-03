@@ -45,3 +45,6 @@ export const deletePatient = (id: string) => {
 export const getPatient = (id: string) => {
   return request<Patient>(`patient/info/${id}`)
 }
+
+export const loginByQQ = (openId: string) =>
+  request<User>('/login/thirdparty', 'POST', { openId, source: 'qq' })

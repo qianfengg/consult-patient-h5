@@ -110,6 +110,11 @@ const router = createRouter({
       meta: { title: '物流详情' }
     },
     {
+      path: '/login/callback',
+      component: () => import('@/views/Login/LoginCallback.vue'),
+      meta: { title: 'QQ登录-绑定手机' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
@@ -121,7 +126,7 @@ router.beforeEach((to) => {
   NProgress.start()
   const store = useUserStore()
   const token = store.user?.token
-  const whiteList = ['/login']
+  const whiteList = ['/login', '/login/callback']
   if (!token && !whiteList.includes(to.path)) {
     return '/login'
   }
