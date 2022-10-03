@@ -65,6 +65,9 @@ onMounted(() => {
   // })
 })
 const { form, send, time } = useSendCode(mobile, 'login')
+const qqUrl = `https://graph.qq.com/oauth2.0/authorize?client_id=102015968&response_type=token&scope=all&redirect_uri=${encodeURIComponent(
+  import.meta.env.VITE_APP_CALLBACK
+)}%2Flogin%2Fcallback`
 </script>
 
 <template>
@@ -125,11 +128,7 @@ const { form, send, time } = useSendCode(mobile, 'login')
     <div class="login-other">
       <!-- <div class="icon" id="qq"></div> -->
       <van-divider>第三方登录</van-divider>
-      <a
-        @click="store.setReturnUrl(route.query.returnUrl as string)"
-        href="https://graph.qq.com/oauth2.0/authorize?client_id=102015968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fconsult-patients.itheima.net%2Flogin%2Fcallback"
-        class="icon"
-      >
+      <a @click="store.setReturnUrl(route.query.returnUrl as string)" :href="qqUrl" class="icon">
         <img src="@/assets/qq.svg" alt="" />
       </a>
     </div>
